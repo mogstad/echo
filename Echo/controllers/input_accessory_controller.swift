@@ -135,6 +135,13 @@ public class InputAccessoryController: NSObject {
       if self.textView.isFirstResponder() {
         self.createInputAccessoryView()
         self.textView.refreshInputViews()
+      } else if let window = self.accessoryView.window {
+        let height = window.bounds.height
+        let size = self.accessoryView.bounds.size
+        let frame = CGRect(origin: CGPoint(x: 0, y: height - size.height), size: self.accessoryView.bounds.size)
+        self.delegate?.updateAccessoryView(frame,
+          adjustContentOffset: self.scrollView.dragging == false,
+          animation: nil)
       }
     }
   }
