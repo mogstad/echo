@@ -11,8 +11,6 @@ struct KeyboardChange {
     if let userInfo = notification.userInfo,
       end = userInfo[UIKeyboardFrameEndUserInfoKey] as? NSValue,
       begin = userInfo[UIKeyboardFrameBeginUserInfoKey] as? NSValue,
-      curve = userInfo[UIKeyboardAnimationCurveUserInfoKey] as? NSNumber,
-      duration = userInfo[UIKeyboardAnimationDurationUserInfoKey] as? NSNumber,
       type = KeyboardChangeType.fromNotificationName(notification.name) {
 
         self.type = type
@@ -36,7 +34,7 @@ struct KeyboardChange {
 
 }
 
-extension KeyboardChange: DebugPrintable {
+extension KeyboardChange: CustomDebugStringConvertible {
   var debugDescription: String {
     return "<KeyboardChange end=\"\(self.end)\" type=\"\(self.type)\">"
   }

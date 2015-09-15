@@ -18,7 +18,7 @@ public class TextView: UITextView {
       self.placeholderTextView.textColor = newValue
     }
     get {
-      return self.placeholderTextView.textColor
+      return self.placeholderTextView.textColor!
     }
   }
 
@@ -31,7 +31,7 @@ public class TextView: UITextView {
     }
   }
 
-  override public var font: UIFont! {
+  override public var font: UIFont? {
     didSet {
       self.placeholderTextView.font = self.font
     }
@@ -66,7 +66,7 @@ public class TextView: UITextView {
     self.setup()
   }
 
-  required public init(coder: NSCoder) {
+  required public init?(coder: NSCoder) {
     super.init(coder: coder)
     self.setup()
   }
@@ -96,7 +96,7 @@ public class TextView: UITextView {
   }
 
   private func configurePlaceholderTextViewVisibility() {
-    self.placeholderTextView.hidden = count(self.text) == 0 ? false : true
+    self.placeholderTextView.hidden = self.text.characters.count == 0 ? false : true
   }
 
   private func setup() {

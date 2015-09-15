@@ -19,7 +19,7 @@ enum KeyboardChangeType {
   }
 }
 
-extension KeyboardChangeType: DebugPrintable {
+extension KeyboardChangeType: CustomDebugStringConvertible {
   var debugDescription: String {
     switch self {
     case .willHide:

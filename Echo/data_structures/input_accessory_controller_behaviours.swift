@@ -18,23 +18,15 @@ import Foundation
 /// optimizations, and allows the input accessory view to be visible when 
 /// another responder is first responder.
 ///
-public struct InputAccessoryControllerBehaviours: RawOptionSetType {
+public struct InputAccessoryControllerBehaviours: OptionSetType {
 
-  public var rawValue: UInt
-  public init(rawValue value: UInt) {
-    self.rawValue = value
-  }
+  public let rawValue: UInt
 
-  public init(nilLiteral: Void) {
-    self.rawValue = 0
-  }
-
-  func contains(state: InputAccessoryControllerBehaviours) -> Bool {
-    return (state & self).rawValue == state.rawValue
+  public init(rawValue: UInt) {
+    self.rawValue = rawValue
   }
 
   public static let allZeros = InputAccessoryControllerBehaviours(rawValue: 0)
   public static let adjustContentOffset = InputAccessoryControllerBehaviours(rawValue: 0b1)
   public static let disableInteractiveDismissing = InputAccessoryControllerBehaviours(rawValue: 0b10)
-
 }

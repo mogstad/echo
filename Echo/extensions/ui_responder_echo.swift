@@ -36,7 +36,7 @@ extension UIResponder {
       objc_setAssociatedObject(self,
         &DidNotResignFirstResponder,
         newValue as NSNumber?,
-        UInt(OBJC_ASSOCIATION_RETAIN_NONATOMIC))
+        objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     } get {
       if let didNotResignFirstResponder = objc_getAssociatedObject(self, &DidNotResignFirstResponder) as? NSNumber {
         return didNotResignFirstResponder.boolValue
