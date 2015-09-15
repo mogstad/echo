@@ -4,10 +4,10 @@ public protocol InputAccessoryControllerDelegate: class {
 
   /// Called whenever the keyboard frame changes
   ///
-  /// :param: rect input accessory view’s frame in the window coordinate system
-  /// :param: adjustContentOffset indicates if the content offset should be
+  /// - parameter rect: input accessory view’s frame in the window coordinate system
+  /// - parameter adjustContentOffset: indicates if the content offset should be
   ///   updated accordingly.
-  /// :param: animation struct including details how to animated the change.
+  /// - parameter animation: struct including details how to animated the change.
   func updateAccessoryView(rect: CGRect, adjustContentOffset: Bool, animation: KeyboardAnimation?)
 
 }
@@ -117,7 +117,7 @@ public class InputAccessoryController: NSObject {
   }
 
   private func validateKeyboardNotification(keyboardChange: KeyboardChange) -> Bool {
-    if let delegate = self.delegate as? InputAccessoryControllerResponderDelegate {
+    if let _ = self.delegate as? InputAccessoryControllerResponderDelegate {
       return (self.textView.didNotResignFirstResponder == false)
     } else {
       return (
@@ -178,17 +178,18 @@ public class InputAccessoryController: NSObject {
   /// scrolled position and if the scrolling happend because the user is 
   /// dragging.
   private func addContentOffsetObserver() {
-    self.scrollView.addObserver(self, forKeyPath: "contentOffset", options: .allZeros, context: nil)
+    self.scrollView.addObserver(self, forKeyPath: "contentOffset", options: [], context: nil)
   }
 
   /// Add KVO observer to the accessory view to update the textView’s 
   /// placeholder accessory view to make sure the size is the same, to make sure
   /// the keyboard notifications has the correct frame.
   private func observeAccessoryBoundsChanges() {
-    self.accessoryView.layer.addObserver(self, forKeyPath: "bounds", options: .New | .Old, context: nil)
+    self.accessoryView.layer.addObserver(self, forKeyPath: "bounds", options: [.New, .Old], context: nil)
   }
 
-  public override func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject, change: [NSObject: AnyObject], context: UnsafeMutablePointer<Void>) {
+  public override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String: AnyObject]?, context: UnsafeMutablePointer<Void>) {
+    guard let keyPath = keyPath else { return }
     let object = object as! NSObject
     switch keyPath {
     case "contentOffset" where object == self.scrollView:
