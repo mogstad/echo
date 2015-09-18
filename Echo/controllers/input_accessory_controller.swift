@@ -118,11 +118,11 @@ public class InputAccessoryController: NSObject {
 
   private func validateKeyboardNotification(keyboardChange: KeyboardChange) -> Bool {
     if let delegate = self.delegate as? InputAccessoryControllerResponderDelegate {
-      return (self.textView.didNotResignFirstResponder == false)
+      return keyboardChange.type != .didShow
     } else {
       return (
-        keyboardChange.belongsTo(self.textView) &&
-        self.textView.didNotResignFirstResponder == false
+        keyboardChange.type != .didShow &&
+        keyboardChange.belongsTo(self.textView)
       )
     }
   }

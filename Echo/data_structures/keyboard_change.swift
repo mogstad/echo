@@ -17,7 +17,7 @@ struct KeyboardChange {
 
         self.type = type
         self.end = end.CGRectValue()
-        self.begin = end.CGRectValue()
+        self.begin = begin.CGRectValue()
         self.animation = KeyboardAnimation(notification: notification)
     } else {
       return nil
