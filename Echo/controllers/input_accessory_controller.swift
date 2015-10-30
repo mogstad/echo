@@ -135,18 +135,24 @@ public class InputAccessoryController: NSObject {
       if self.textView.isFirstResponder() {
         self.createInputAccessoryView()
         self.textView.refreshInputViews()
-      } else if let window = self.accessoryView.window {
-        let height = window.bounds.height
-        let size = self.accessoryView.bounds.size
-        let frame = CGRect(origin: CGPoint(x: 0, y: height - size.height), size: self.accessoryView.bounds.size)
-        self.delegate?.updateAccessoryView(frame,
-          adjustContentOffset: self.scrollView.dragging == false,
-          animation: nil)
+      } else {
+        self.estimateAccessoryView()
       }
     }
   }
 
-  /// Gets called when the inputAccessoryView’s parent has a new frame, this 
+  private func estimateAccessoryView() {
+    if let window = self.accessoryView.window {
+      let height = window.bounds.height
+      let size = self.accessoryView.bounds.size
+      let frame = CGRect(origin: CGPoint(x: 0, y: height - size.height), size: self.accessoryView.bounds.size)
+      self.delegate?.updateAccessoryView(frame,
+        adjustContentOffset: self.scrollView.dragging == false,
+        animation: nil)
+    }
+  }
+
+  /// Gets called when the inputAccessoryView’s parent has a new frame, this
   /// usually means we’re interactively dismissing the keyboard, we therefor 
   /// need to update the UI, and compensate the scroll view’s `scrollOffset` if 
   /// the scroll view is inverted.
@@ -199,13 +205,14 @@ public class InputAccessoryController: NSObject {
     case "bounds" where object == self.accessoryView.layer:
       if self.behaviours.contains(.disableInteractiveDismissing) == false {
         self.refreshInputViews()
-      } else {
-        // HACK
+      } else if self.textView.isFirstResponder() {
         let input = InputAccessoryView(frame: self.accessoryView.bounds)
         self.setInputAccessoryView(input)
         self.textView.refreshInputViews()
         self.setInputAccessoryView(nil)
         self.textView.refreshInputViews()
+      } else {
+        self.estimateAccessoryView()
       }
     default:
       super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
