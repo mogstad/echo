@@ -1,6 +1,6 @@
 {
   "name": "Echo",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "license": "MIT",
   "summary": "A hassle free micro framework for laying out input accessory views",
   "homepage": "https://github.com/mogstad/echo",
@@ -9,7 +9,7 @@
   },
   "source": {
     "git": "https://github.com/mogstad/echo.git",
-    "tag": "v0.3.0"
+    "tag": "v0.4.0"
   },
   "platforms": {
     "ios": "8.0"
