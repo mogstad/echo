@@ -94,11 +94,15 @@ public class InputAccessoryController: NSObject {
         }
 
         if keyboardNotification.type == .willHide || keyboardNotification.type == .willShow || keyboardNotification.type == .didHide {
-
-          let textViewInputAccesoryHeight = self.textView.inputAccessoryView?.bounds.height ?? 0
-          let origin = CGPoint(
-            x: keyboardNotification.end.minX,
-            y: keyboardNotification.end.minY + textViewInputAccesoryHeight - self.accessoryView.bounds.height)
+          let height = self.scrollView.window!.frame.height
+          let origin: CGPoint
+          if keyboardNotification.type == .willShow {
+            origin = CGPoint(
+              x: keyboardNotification.end.minX,
+              y: height - keyboardNotification.end.height - self.accessoryView.bounds.height)
+          } else {
+            origin = CGPoint(x: 0, y: self.scrollView.window!.frame.height)
+          }
 
           self.delegate?.updateAccessoryView(CGRect(origin: origin, size: self.accessoryView.bounds.size),
             adjustContentOffset: true,
