@@ -5,7 +5,7 @@ class LOL: UICollectionViewCell {
   let label: UILabel
 
   override init(frame: CGRect) {
-    self.label = UILabel(frame: .zeroRect)
+    self.label = UILabel(frame: .zero)
     super.init(frame: frame)
     self.label.transform = CGAffineTransformMakeScale(1, -1)
     self.addSubview(self.label)
@@ -45,7 +45,7 @@ class ViewController: UIViewController {
     
     let controller = InputAccessoryController(
       scrollView: self.collectionView,
-      behaviours: .allZeros,
+      behaviours: [.disableInteractiveDismissing],
       accessoryView: self.accessoryView,
       textView: self.textView)
 
@@ -136,7 +136,11 @@ extension ViewController: UITextViewDelegate {
     self.accessoryView.layoutIfNeeded()
 
     // This works around the content being scrolled beyond the bottom.
-    let endRange = NSRange(location: count(textView.text), length: 0)
+
+    let endRange = NSRange(
+      location: textView.text.characters.count,
+      length: 0)
+    
     if NSEqualRanges(textView.selectedRange, endRange) == true {
       let bottom = CGPoint(x: 0, y: textView.contentSize.height - textView.frame.size.height)
       textView.setContentOffset(bottom, animated: false)

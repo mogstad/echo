@@ -4,7 +4,7 @@ class ComposerView: UIView {
 
   @IBOutlet var textView: UITextView!
 
-  private let sizingTextView: UITextView = UITextView(frame: .zeroRect)
+  private let sizingTextView: UITextView = UITextView(frame: .zero)
   override func intrinsicContentSize() -> CGSize {
 
     self.sizingTextView.font = self.textView.font
