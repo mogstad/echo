@@ -84,6 +84,7 @@ public class InputAccessoryController: NSObject {
   func normalizeKeyboardNotification(notification: NSNotification) {
     if let keyboardNotification = KeyboardChange(notification: notification)
       where self.validateKeyboardNotification(keyboardNotification) {
+        guard let window = self.scrollView.window else { return }
 
         if keyboardNotification.type == .willShow {
           // Stop scrolling, prevents a layout glitch that only happens if the
@@ -94,14 +95,16 @@ public class InputAccessoryController: NSObject {
         }
 
         if keyboardNotification.type == .willHide || keyboardNotification.type == .willShow || keyboardNotification.type == .didHide {
-          let height = self.scrollView.window!.frame.height
+          let height = window.frame.height
           let origin: CGPoint
           if keyboardNotification.type == .willShow {
+            var keyboardHeight = window.frame.height - keyboardNotification.end.origin.y
+            keyboardHeight = min(keyboardHeight, keyboardNotification.end.height)
             origin = CGPoint(
               x: keyboardNotification.end.minX,
-              y: height - keyboardNotification.end.height - self.accessoryView.bounds.height)
+              y: height - keyboardHeight - self.accessoryView.bounds.height)
           } else {
-            origin = CGPoint(x: 0, y: self.scrollView.window!.frame.height)
+            origin = CGPoint(x: 0, y: window.frame.height)
           }
 
           self.delegate?.updateAccessoryView(CGRect(origin: origin, size: self.accessoryView.bounds.size),
