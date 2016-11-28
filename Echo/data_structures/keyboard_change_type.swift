@@ -3,15 +3,15 @@ import UIKit
 enum KeyboardChangeType {
   case willShow, willHide, didShow, didHide
 
-  static func fromNotificationName(name: String) -> KeyboardChangeType? {
+  static func fromNotificationName(_ name: NSNotification.Name) -> KeyboardChangeType? {
     switch name {
-    case UIKeyboardDidHideNotification:
+    case NSNotification.Name.UIKeyboardDidHide:
       return .didHide
-    case UIKeyboardWillHideNotification:
+    case NSNotification.Name.UIKeyboardWillHide:
       return .willHide
-    case UIKeyboardDidShowNotification:
+    case NSNotification.Name.UIKeyboardDidShow:
       return .didShow
-    case UIKeyboardWillShowNotification:
+    case NSNotification.Name.UIKeyboardWillShow:
       return .willShow
     default:
       return nil

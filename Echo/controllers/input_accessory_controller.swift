@@ -8,7 +8,7 @@ public protocol InputAccessoryControllerDelegate: class {
   /// - parameter adjustContentOffset: indicates if the content offset should be
   ///   updated accordingly.
   /// - parameter animation: struct including details how to animated the change.
-  func updateAccessoryView(rect: CGRect, adjustContentOffset: Bool, animation: KeyboardAnimation?)
+  func updateAccessoryView(_ rect: CGRect, adjustContentOffset: Bool, animation: KeyboardAnimation?)
 
 }
 
@@ -16,7 +16,7 @@ public protocol InputAccessoryControllerDelegate: class {
 /// view
 public protocol InputAccessoryControllerResponderDelegate: InputAccessoryControllerDelegate {
 
-  func showAccessoryViewForResponder(responder: UIResponder) -> Bool
+  func showAccessoryViewForResponder(_ responder: UIResponder) -> Bool
 
 }
 
@@ -27,14 +27,14 @@ public protocol InputAccessoryControllerResponderDelegate: InputAccessoryControl
 /// notifications and your scroll views’s content offset to determine where the 
 /// keyboard is located and tell you when it’s time to update your UI to make 
 /// room for the keyboard and update the input accessory view.
-public class InputAccessoryController: NSObject {
+open class InputAccessoryController: NSObject {
 
   let scrollView: UIScrollView
   let accessoryView: UIView
   let textView: UIResponder
   let behaviours: InputAccessoryControllerBehaviours
 
-  private var movingKeyboard: Bool = false {
+  fileprivate var movingKeyboard: Bool = false {
     didSet {
       if self.movingKeyboard == false {
         self.scrollViewOffsetBeforeDragging = nil
@@ -44,8 +44,8 @@ public class InputAccessoryController: NSObject {
     }
   }
   
-  private var scrollViewOffsetBeforeDragging: CGPoint?
-  public weak var delegate: InputAccessoryControllerDelegate?
+  fileprivate var scrollViewOffsetBeforeDragging: CGPoint?
+  open weak var delegate: InputAccessoryControllerDelegate?
 
   public init(scrollView: UIScrollView, behaviours: InputAccessoryControllerBehaviours, accessoryView: UIView, textView: UIResponder) {
     self.scrollView = scrollView
@@ -61,12 +61,12 @@ public class InputAccessoryController: NSObject {
   deinit {
     self.scrollView.removeObserver(self, forKeyPath: "contentOffset")
     self.accessoryView.layer.removeObserver(self, forKeyPath: "bounds")
-    NSNotificationCenter.defaultCenter().removeObserver(self)
+    NotificationCenter.default.removeObserver(self)
   }
 
   // MARK: Private
 
-  private func createInputAccessoryView() {
+  fileprivate func createInputAccessoryView() {
     self.accessoryView.layoutIfNeeded()
     let input = InputAccessoryView(frame: self.accessoryView.bounds)
     if let textView = self.textView as? UITextView {
@@ -76,14 +76,13 @@ public class InputAccessoryController: NSObject {
     }
   }
 
-  private func updateMovingKeyboard() {
-    self.movingKeyboard = self.scrollView.dragging
+  fileprivate func updateMovingKeyboard() {
+    self.movingKeyboard = self.scrollView.isDragging
   }
 
   /// Notifications are a mess, dealing with userInfo is pita
-  func normalizeKeyboardNotification(notification: NSNotification) {
-    if let keyboardNotification = KeyboardChange(notification: notification)
-      where self.validateKeyboardNotification(keyboardNotification) {
+  func normalizeKeyboardNotification(_ notification: Notification) {
+    if let keyboardNotification = KeyboardChange(notification: notification), self.validateKeyboardNotification(keyboardNotification) {
         guard let window = self.scrollView.window else { return }
 
         if keyboardNotification.type == .willShow {
@@ -123,7 +122,7 @@ public class InputAccessoryController: NSObject {
     }
   }
 
-  private func validateKeyboardNotification(keyboardChange: KeyboardChange) -> Bool {
+  fileprivate func validateKeyboardNotification(_ keyboardChange: KeyboardChange) -> Bool {
     if let _ = self.delegate as? InputAccessoryControllerResponderDelegate {
       return (self.textView.didNotResignFirstResponder == false)
     } else {
@@ -137,9 +136,9 @@ public class InputAccessoryController: NSObject {
   /// Sets or resets the input accessory view depending on if the text view is
   /// first responder or not. We only want the inputAccessoryView if the text 
   /// view is first responder.
-  private func refreshInputViews() {
+  fileprivate func refreshInputViews() {
     if self.behaviours.contains(.disableInteractiveDismissing) == false {
-      if self.textView.isFirstResponder() {
+      if self.textView.isFirstResponder {
         self.createInputAccessoryView()
         self.textView.refreshInputViews()
       } else {
@@ -148,13 +147,13 @@ public class InputAccessoryController: NSObject {
     }
   }
 
-  private func estimateAccessoryView() {
+  fileprivate func estimateAccessoryView() {
     if let window = self.accessoryView.window {
       let height = window.bounds.height
       let size = self.accessoryView.bounds.size
       let frame = CGRect(origin: CGPoint(x: 0, y: height - size.height), size: self.accessoryView.bounds.size)
       self.delegate?.updateAccessoryView(frame,
-        adjustContentOffset: self.scrollView.dragging == false,
+        adjustContentOffset: self.scrollView.isDragging == false,
         animation: nil)
     }
   }
@@ -163,9 +162,9 @@ public class InputAccessoryController: NSObject {
   /// usually means we’re interactively dismissing the keyboard, we therefor 
   /// need to update the UI, and compensate the scroll view’s `scrollOffset` if 
   /// the scroll view is inverted.
-  func inputAccessoryViewTracked(notification: NSNotification) {
-    if let userInfo = notification.userInfo, end = userInfo["frame"] as? NSValue {
-      let rect = end.CGRectValue()
+  func inputAccessoryViewTracked(_ notification: Notification) {
+    if let userInfo = notification.userInfo, let end = userInfo["frame"] as? NSValue {
+      let rect = end.cgRectValue
 
       let textViewInputAccesoryHeight = self.textView.inputAccessoryView?.bounds.height ?? 0
       let origin = CGPoint(
@@ -174,10 +173,10 @@ public class InputAccessoryController: NSObject {
 
       let inputAccessoryView = CGRect(origin: origin, size: self.accessoryView.bounds.size)
       self.delegate?.updateAccessoryView(inputAccessoryView,
-        adjustContentOffset: self.scrollView.dragging == false,
+        adjustContentOffset: self.scrollView.isDragging == false,
         animation: nil)
 
-      if self.scrollView.dragging && self.behaviours.contains(.adjustContentOffset) {
+      if self.scrollView.isDragging && self.behaviours.contains(.adjustContentOffset) {
         if self.movingKeyboard == false {
           self.movingKeyboard = true
         } else if let scrollViewOffsetBeforeDragging = self.scrollViewOffsetBeforeDragging {
@@ -190,29 +189,29 @@ public class InputAccessoryController: NSObject {
   /// Add KVO observer to our collection view, we need to keep track of the last
   /// scrolled position and if the scrolling happend because the user is 
   /// dragging.
-  private func addContentOffsetObserver() {
+  fileprivate func addContentOffsetObserver() {
     self.scrollView.addObserver(self, forKeyPath: "contentOffset", options: [], context: nil)
   }
 
   /// Add KVO observer to the accessory view to update the textView’s 
   /// placeholder accessory view to make sure the size is the same, to make sure
   /// the keyboard notifications has the correct frame.
-  private func observeAccessoryBoundsChanges() {
-    self.accessoryView.layer.addObserver(self, forKeyPath: "bounds", options: [.New, .Old], context: nil)
+  fileprivate func observeAccessoryBoundsChanges() {
+    self.accessoryView.layer.addObserver(self, forKeyPath: "bounds", options: [.new, .old], context: nil)
   }
 
-  public override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String: AnyObject]?, context: UnsafeMutablePointer<Void>) {
+  open override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
     guard let keyPath = keyPath else { return }
     let object = object as! NSObject
     switch keyPath {
     case "contentOffset" where object == self.scrollView:
-      if self.scrollView.dragging == false {
+      if self.scrollView.isDragging == false {
         self.movingKeyboard = false
       }
     case "bounds" where object == self.accessoryView.layer:
       if self.behaviours.contains(.disableInteractiveDismissing) == false {
         self.refreshInputViews()
-      } else if self.textView.isFirstResponder() {
+      } else if self.textView.isFirstResponder {
         let input = InputAccessoryView(frame: self.accessoryView.bounds)
         self.setInputAccessoryView(input)
         self.textView.refreshInputViews()
@@ -222,11 +221,11 @@ public class InputAccessoryController: NSObject {
         self.estimateAccessoryView()
       }
     default:
-      super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
+      super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
     }
   }
 
-  private func setInputAccessoryView(input: UIView?) {
+  fileprivate func setInputAccessoryView(_ input: UIView?) {
     if let textView = self.textView as? UITextView {
       textView.inputAccessoryView = input
     } else if let textField = self.textView as? UITextField {
@@ -234,22 +233,22 @@ public class InputAccessoryController: NSObject {
     }
   }
 
-  private func bindKeyboardNotifications() {
-    NSNotificationCenter.defaultCenter().addObserver(self,
-      selector: "inputAccessoryViewTracked:",
-      name: "InputAccessoryViewTracked",
+  fileprivate func bindKeyboardNotifications() {
+    NotificationCenter.default.addObserver(self,
+      selector: #selector(InputAccessoryController.inputAccessoryViewTracked(_:)),
+      name: NSNotification.Name(rawValue: "InputAccessoryViewTracked"),
       object: nil)
 
     let notifications = [
-      UIKeyboardWillShowNotification,
-      UIKeyboardDidShowNotification,
-      UIKeyboardWillHideNotification,
-      UIKeyboardDidHideNotification
+      NSNotification.Name.UIKeyboardWillShow,
+      NSNotification.Name.UIKeyboardDidShow,
+      NSNotification.Name.UIKeyboardWillHide,
+      NSNotification.Name.UIKeyboardDidHide
     ]
 
     for notification in notifications {
-      NSNotificationCenter.defaultCenter().addObserver(self,
-        selector: "normalizeKeyboardNotification:",
+      NotificationCenter.default.addObserver(self,
+        selector: #selector(InputAccessoryController.normalizeKeyboardNotification(_:)),
         name: notification,
         object: nil)
     }

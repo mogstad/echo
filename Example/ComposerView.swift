@@ -4,14 +4,14 @@ class ComposerView: UIView {
 
   @IBOutlet var textView: UITextView!
 
-  private let sizingTextView: UITextView = UITextView(frame: .zero)
-  override func intrinsicContentSize() -> CGSize {
+  fileprivate let sizingTextView: UITextView = UITextView(frame: .zero)
+  override var intrinsicContentSize : CGSize {
 
     self.sizingTextView.font = self.textView.font
     self.sizingTextView.text = self.textView.text
     self.sizingTextView.textContainerInset = self.textView.textContainerInset
 
-    let textViewSize = self.sizingTextView.sizeThatFits(CGSize(width: self.textView.frame.width, height: .max))
+    let textViewSize = self.sizingTextView.sizeThatFits(CGSize(width: self.textView.frame.width, height: .greatestFiniteMagnitude))
 
     return CGSize(width: UIViewNoIntrinsicMetric, height: textViewSize.height)
   }

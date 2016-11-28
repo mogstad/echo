@@ -18,7 +18,7 @@ import Foundation
 /// optimizations, and allows the input accessory view to be visible when 
 /// another responder is first responder.
 ///
-public struct InputAccessoryControllerBehaviours: OptionSetType {
+public struct InputAccessoryControllerBehaviours: OptionSet {
 
   public let rawValue: UInt
 

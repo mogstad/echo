@@ -8,10 +8,10 @@ extension UIResponder {
 
   class func currentFirstResponder() -> UIResponder? {
     firstResponder = nil
-    UIApplication.sharedApplication().sendAction("findFirstResponder",
+    UIApplication.shared.sendAction(#selector(UIResponder.findFirstResponder),
       to: nil,
       from: nil,
-      forEvent: nil)
+      for: nil)
 
     return firstResponder
   }
@@ -24,7 +24,7 @@ extension UIResponder {
   // keyboard notifications. Reloading input views generates new keyboard
   // notifications.
   func refreshInputViews() {
-    if self.isFirstResponder() {
+    if self.isFirstResponder {
       self.didNotResignFirstResponder = true
       self.reloadInputViews()
       self.didNotResignFirstResponder = false
