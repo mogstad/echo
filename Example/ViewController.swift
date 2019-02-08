@@ -7,7 +7,7 @@ class LOL: UICollectionViewCell {
   override init(frame: CGRect) {
     self.label = UILabel(frame: .zero)
     super.init(frame: frame)
-    self.label.transform = CGAffineTransformMakeScale(1, -1)
+    self.label.transform = CGAffineTransform(scaleX: 1, y: -1)
     self.addSubview(self.label)
   }
   required init(coder: NSCoder) {
@@ -35,11 +35,11 @@ class ViewController: UIViewController {
     super.viewDidLoad()
 
     self.collectionView.dataSource = self
-    self.collectionView.registerClass(LOL.self, forCellWithReuseIdentifier: "LOL")
-    self.collectionView.keyboardDismissMode = .Interactive
-    self.collectionView.transform = CGAffineTransformMake(1, 0, 0, -1, 0, 0)
+    self.collectionView.register(LOL.self, forCellWithReuseIdentifier: "LOL")
+    self.collectionView.keyboardDismissMode = .interactive
+    self.collectionView.transform = CGAffineTransform(a: 1, b: 0, c: 0, d: -1, tx: 0, ty: 0)
 
-    let hideKeyboard = UITapGestureRecognizer(target: self, action: "hideKeyboard:")
+    let hideKeyboard = UITapGestureRecognizer(target: self, action: #selector(ViewController.hideKeyboard(_:)))
     self.collectionView.addGestureRecognizer(hideKeyboard)
     self.automaticallyAdjustsScrollViewInsets = false
     
@@ -54,8 +54,8 @@ class ViewController: UIViewController {
     self.controller = controller
   }
 
-  func hideKeyboard(sender: UIGestureRecognizer) {
-    self.textView.resignFirstResponder()
+  func hideKeyboard(_ sender: UIGestureRecognizer) {
+    let _ = self.textView.resignFirstResponder()
     self.textField.resignFirstResponder()
   }
 
@@ -63,18 +63,18 @@ class ViewController: UIViewController {
 
 extension ViewController: UICollectionViewDataSource {
 
-  func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+  func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
     return 300
   }
 
-  func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
+  func numberOfSections(in collectionView: UICollectionView) -> Int {
     return 1
   }
 
-  func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-    let cell = collectionView.dequeueReusableCellWithReuseIdentifier("LOL", forIndexPath: indexPath) as! LOL
+  func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "LOL", for: indexPath) as! LOL
 
-    cell.backgroundColor = UIColor.redColor()
+    cell.backgroundColor = UIColor.red
     cell.label.text = "#\(indexPath.item)"
     return cell
   }
@@ -82,14 +82,14 @@ extension ViewController: UICollectionViewDataSource {
 }
 
 extension ViewController: InputAccessoryControllerResponderDelegate {
-  func showAccessoryViewForResponder(responder: UIResponder) -> Bool {
+  func showAccessoryViewForResponder(_ responder: UIResponder) -> Bool {
     return true
   }
 }
 
 extension ViewController: InputAccessoryControllerDelegate {
 
-  func updateAccessoryView(rect: CGRect, adjustContentOffset: Bool, animation: KeyboardAnimation?) {
+  func updateAccessoryView(_ rect: CGRect, adjustContentOffset: Bool, animation: KeyboardAnimation?) {
     self.constraint.constant = self.keyboardHeight(rect)
     var contentInset = self.collectionView.contentInset
     contentInset.top = self.constraint.constant + self.accessoryView.bounds.height
@@ -101,7 +101,7 @@ extension ViewController: InputAccessoryControllerDelegate {
     let offset: CGPoint? = adjustContentOffset ? contentOffset : nil
 
     if let animation = animation {
-      UIView.animateWithDuration(animation.duration,
+      UIView.animate(withDuration: animation.duration,
         delay: animation.delay,
         options: animation.options,
         animations: {
@@ -114,7 +114,7 @@ extension ViewController: InputAccessoryControllerDelegate {
     }
   }
 
-  private func update(contentInset: UIEdgeInsets, contentOffset: CGPoint?) {
+  fileprivate func update(_ contentInset: UIEdgeInsets, contentOffset: CGPoint?) {
     if let contentOffset = contentOffset {
       self.collectionView.contentOffset = contentOffset
     }
@@ -122,8 +122,8 @@ extension ViewController: InputAccessoryControllerDelegate {
     self.collectionView.scrollIndicatorInsets = contentInset
   }
 
-  func keyboardHeight(rect: CGRect) -> CGFloat {
-    let endFrame = self.view.convertRect(rect, fromView: nil)
+  func keyboardHeight(_ rect: CGRect) -> CGFloat {
+    let endFrame = self.view.convert(rect, from: nil)
     return max(0, self.view.bounds.height - endFrame.maxY)
   }
 
@@ -131,7 +131,7 @@ extension ViewController: InputAccessoryControllerDelegate {
 
 extension ViewController: UITextViewDelegate {
 
-  func textViewDidChange(textView: UITextView) {
+  func textViewDidChange(_ textView: UITextView) {
     self.accessoryView.invalidateIntrinsicContentSize()
     self.accessoryView.layoutIfNeeded()
 

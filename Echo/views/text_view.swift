@@ -1,19 +1,19 @@
 import UIKit
 
-public class TextView: UITextView {
+open class TextView: UITextView {
 
-  private lazy var placeholderTextView: UITextView = {
+  fileprivate lazy var placeholderTextView: UITextView = {
     let textView = UITextView()
-    textView.opaque = false
-    textView.scrollEnabled = false
-    textView.backgroundColor = UIColor.clearColor()
+    textView.isOpaque = false
+    textView.isScrollEnabled = false
+    textView.backgroundColor = UIColor.clear
     textView.alpha = 0.2
-    textView.editable = false
-    textView.userInteractionEnabled = false
+    textView.isEditable = false
+    textView.isUserInteractionEnabled = false
     return textView
   }()
 
-  public var placeholderColor: UIColor {
+  open var placeholderColor: UIColor {
     set {
       self.placeholderTextView.textColor = newValue
     }
@@ -22,7 +22,7 @@ public class TextView: UITextView {
     }
   }
 
-  public var placeholder: String {
+  open var placeholder: String {
     set {
       self.placeholderTextView.text = newValue
     }
@@ -31,31 +31,31 @@ public class TextView: UITextView {
     }
   }
 
-  override public var font: UIFont? {
+  override open var font: UIFont? {
     didSet {
       self.placeholderTextView.font = self.font
     }
   }
 
-  override public var textContainerInset: UIEdgeInsets {
+  override open var textContainerInset: UIEdgeInsets {
     didSet {
       self.placeholderTextView.textContainerInset = self.textContainerInset
     }
   }
 
-  override public var contentInset: UIEdgeInsets {
+  override open var contentInset: UIEdgeInsets {
     didSet {
       self.placeholderTextView.contentInset = self.contentInset
     }
   }
 
-  override public var text: String! {
+  override open var text: String! {
     didSet {
       self.configurePlaceholderTextViewVisibility()
     }
   }
 
-  override public var attributedText: NSAttributedString! {
+  override open var attributedText: NSAttributedString! {
     didSet {
       self.configurePlaceholderTextViewVisibility()
     }
@@ -72,38 +72,38 @@ public class TextView: UITextView {
   }
 
   deinit {
-    NSNotificationCenter.defaultCenter().removeObserver(self)
+    NotificationCenter.default.removeObserver(self)
   }
 
   // Remove the input accessory view right before resigning as first responder 
   // to make sure the keyboard animates to the correct location. Without this 
   // fix the keyboard animates the height of the input accessory view too far.
-  public override func resignFirstResponder() -> Bool {
+  open override func resignFirstResponder() -> Bool {
     self.inputAccessoryView = nil
     self.refreshInputViews()
     return super.resignFirstResponder()
   }
 
-  public override func layoutSubviews() {
+  open override func layoutSubviews() {
     super.layoutSubviews()
     self.placeholderTextView.frame = self.bounds
   }
 
   // Private
 
-  func textViewChanged(textView: UITextView) {
+  func textViewChanged(_ textView: UITextView) {
     self.configurePlaceholderTextViewVisibility()
   }
 
-  private func configurePlaceholderTextViewVisibility() {
-    self.placeholderTextView.hidden = self.text.characters.count == 0 ? false : true
+  fileprivate func configurePlaceholderTextViewVisibility() {
+    self.placeholderTextView.isHidden = self.text.characters.count == 0 ? false : true
   }
 
-  private func setup() {
+  fileprivate func setup() {
     self.addSubview(self.placeholderTextView)
-    NSNotificationCenter.defaultCenter().addObserver(self,
-      selector: "textViewChanged:",
-      name: UITextViewTextDidChangeNotification,
+    NotificationCenter.default.addObserver(self,
+      selector: #selector(TextView.textViewChanged(_:)),
+      name: NSNotification.Name.UITextViewTextDidChange,
       object: self)
   }
 

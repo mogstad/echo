@@ -2,11 +2,11 @@ import UIKit
 
 class InputAccessoryView: UIView {
 
-  private weak var observerSuperview: UIView?
+  fileprivate weak var observerSuperview: UIView?
 
   override init(frame: CGRect) {
     super.init(frame: frame)
-    self.userInteractionEnabled = false
+    self.isUserInteractionEnabled = false
   }
 
   required init?(coder: NSCoder) {
@@ -17,39 +17,39 @@ class InputAccessoryView: UIView {
     self.removeSuperviewObserver()
   }
 
-  override func canBecomeFirstResponder() -> Bool {
+  override var canBecomeFirstResponder : Bool {
     return true
   }
 
-  override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
+  override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
 
     if keyPath == "center" {
-      let userInfo: [NSObject: AnyObject] = [
-        "frame": NSValue(CGRect: self.superview!.frame)
+      let userInfo: [AnyHashable: Any] = [
+        "frame": NSValue(cgRect: self.superview!.frame)
       ]
-      NSNotificationCenter.defaultCenter().postNotificationName("InputAccessoryViewTracked", object: self, userInfo: userInfo)
+      NotificationCenter.default.post(name: Notification.Name(rawValue: "InputAccessoryViewTracked"), object: self, userInfo: userInfo)
     } else {
-      super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
+      super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
     }
   }
 
-  override func willMoveToSuperview(newSuperview: UIView?) {
+  override func willMove(toSuperview newSuperview: UIView?) {
     self.removeSuperviewObserver()
     self.addSuperviewObserver(newSuperview)
-    super.willMoveToSuperview(newSuperview)
+    super.willMove(toSuperview: newSuperview)
   }
 
   // MARK: Private
 
-  private func addSuperviewObserver(superview: UIView?) {
+  fileprivate func addSuperviewObserver(_ superview: UIView?) {
     self.removeSuperviewObserver()
     if let superview = superview {
       self.observerSuperview = superview
-      superview.addObserver(self, forKeyPath: "center", options: .New, context: nil)
+      superview.addObserver(self, forKeyPath: "center", options: .new, context: nil)
     }
   }
 
-  private func removeSuperviewObserver() {
+  fileprivate func removeSuperviewObserver() {
     self.observerSuperview?.removeObserver(self, forKeyPath: "center")
     self.observerSuperview = nil
   }

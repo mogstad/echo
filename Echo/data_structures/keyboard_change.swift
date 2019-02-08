@@ -7,28 +7,28 @@ struct KeyboardChange {
   let end: CGRect
   let animation: KeyboardAnimation?
 
-  init?(notification: NSNotification) {
+  init?(notification: Notification) {
     if let userInfo = notification.userInfo,
-      end = userInfo[UIKeyboardFrameEndUserInfoKey] as? NSValue,
-      begin = userInfo[UIKeyboardFrameBeginUserInfoKey] as? NSValue,
-      type = KeyboardChangeType.fromNotificationName(notification.name) {
+      let end = userInfo[UIKeyboardFrameEndUserInfoKey] as? NSValue,
+      let begin = userInfo[UIKeyboardFrameBeginUserInfoKey] as? NSValue,
+      let type = KeyboardChangeType.fromNotificationName(notification.name) {
 
         self.type = type
-        self.end = end.CGRectValue()
-        self.begin = begin.CGRectValue()
+        self.end = end.cgRectValue
+        self.begin = begin.cgRectValue
         self.animation = KeyboardAnimation(notification: notification)
     } else {
       return nil
     }
   }
 
-  func belongsTo(responder: UIResponder) -> Bool {
+  func belongsTo(_ responder: UIResponder) -> Bool {
     switch self.type {
     case .willHide, .willShow, .didShow:
-      return responder.isFirstResponder()
+      return responder.isFirstResponder
     case .didHide:
       // Not exactly exact science, but a decent guess
-      return responder.isFirstResponder() == false
+      return responder.isFirstResponder == false
     }
   }
 
