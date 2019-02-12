@@ -75,15 +75,6 @@ open class TextView: UITextView {
     NotificationCenter.default.removeObserver(self)
   }
 
-  // Remove the input accessory view right before resigning as first responder 
-  // to make sure the keyboard animates to the correct location. Without this 
-  // fix the keyboard animates the height of the input accessory view too far.
-  open override func resignFirstResponder() -> Bool {
-    self.inputAccessoryView = nil
-    self.refreshInputViews()
-    return super.resignFirstResponder()
-  }
-
   open override func layoutSubviews() {
     super.layoutSubviews()
     self.placeholderTextView.frame = self.bounds
@@ -91,19 +82,19 @@ open class TextView: UITextView {
 
   // Private
 
-  func textViewChanged(_ textView: UITextView) {
+  @objc func textViewChanged(_ textView: UITextView) {
     self.configurePlaceholderTextViewVisibility()
   }
 
   fileprivate func configurePlaceholderTextViewVisibility() {
-    self.placeholderTextView.isHidden = self.text.characters.count == 0 ? false : true
+    self.placeholderTextView.isHidden = self.text.count == 0 ? false : true
   }
 
   fileprivate func setup() {
     self.addSubview(self.placeholderTextView)
     NotificationCenter.default.addObserver(self,
       selector: #selector(TextView.textViewChanged(_:)),
-      name: NSNotification.Name.UITextViewTextDidChange,
+      name: UITextView.textDidChangeNotification,
       object: self)
   }
 

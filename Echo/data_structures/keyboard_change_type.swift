@@ -1,18 +1,22 @@
 import UIKit
 
 enum KeyboardChangeType {
-  case willShow, willHide, didShow, didHide
+  case willShow, willHide, didShow, didHide, didChangeFrame, willChangeFrame
 
   static func fromNotificationName(_ name: NSNotification.Name) -> KeyboardChangeType? {
     switch name {
-    case NSNotification.Name.UIKeyboardDidHide:
+    case UIResponder.keyboardDidHideNotification:
       return .didHide
-    case NSNotification.Name.UIKeyboardWillHide:
+    case UIResponder.keyboardWillHideNotification:
       return .willHide
-    case NSNotification.Name.UIKeyboardDidShow:
+    case UIResponder.keyboardDidShowNotification:
       return .didShow
-    case NSNotification.Name.UIKeyboardWillShow:
+    case UIResponder.keyboardWillShowNotification:
       return .willShow
+    case UIResponder.keyboardWillChangeFrameNotification:
+      return .willChangeFrame
+    case UIResponder.keyboardDidChangeFrameNotification:
+      return .didChangeFrame
     default:
       return nil
     }
@@ -30,6 +34,10 @@ extension KeyboardChangeType: CustomDebugStringConvertible {
       return "did hide"
     case .didShow:
       return "did show"
+    case .willChangeFrame:
+      return "will change frame"
+    case .didChangeFrame:
+      return "did change frame"
     }
   }
 }
