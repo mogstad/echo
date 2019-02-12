@@ -16,7 +16,7 @@ extension UIResponder {
     return firstResponder
   }
 
-  func findFirstResponder() {
+  @objc func findFirstResponder() {
     firstResponder = self
   }
 

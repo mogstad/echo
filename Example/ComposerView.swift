@@ -13,7 +13,7 @@ class ComposerView: UIView {
 
     let textViewSize = self.sizingTextView.sizeThatFits(CGSize(width: self.textView.frame.width, height: .greatestFiniteMagnitude))
 
-    return CGSize(width: UIViewNoIntrinsicMetric, height: textViewSize.height)
+    return CGSize(width: UIView.noIntrinsicMetric, height: textViewSize.height)
   }
 
   override func layoutSubviews() {

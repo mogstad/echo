@@ -91,7 +91,7 @@ open class TextView: UITextView {
 
   // Private
 
-  func textViewChanged(_ textView: UITextView) {
+  @objc func textViewChanged(_ textView: UITextView) {
     self.configurePlaceholderTextViewVisibility()
   }
 
@@ -103,7 +103,7 @@ open class TextView: UITextView {
     self.addSubview(self.placeholderTextView)
     NotificationCenter.default.addObserver(self,
       selector: #selector(TextView.textViewChanged(_:)),
-      name: NSNotification.Name.UITextViewTextDidChange,
+      name: UITextView.textDidChangeNotification,
       object: self)
   }
 

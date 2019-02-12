@@ -45,7 +45,7 @@ class ViewController: UIViewController {
     
     let controller = InputAccessoryController(
       scrollView: self.collectionView,
-      behaviours: [.disableInteractiveDismissing],
+      behaviours: [],
       accessoryView: self.accessoryView,
       textView: self.textView)
 
@@ -54,9 +54,10 @@ class ViewController: UIViewController {
     self.controller = controller
   }
 
-  func hideKeyboard(_ sender: UIGestureRecognizer) {
-    let _ = self.textView.resignFirstResponder()
-    self.textField.resignFirstResponder()
+  @objc func hideKeyboard(_ sender: UIGestureRecognizer) {
+    // let _ = self.textView.resignFirstResponder()
+    // self.textField.resignFirstResponder()
+    self.view.endEditing(true)
   }
 
 }
@@ -90,6 +91,8 @@ extension ViewController: InputAccessoryControllerResponderDelegate {
 extension ViewController: InputAccessoryControllerDelegate {
 
   func updateAccessoryView(_ rect: CGRect, adjustContentOffset: Bool, animation: KeyboardAnimation?) {
+
+    let value = self.constraint.constant;
     self.constraint.constant = self.keyboardHeight(rect)
     var contentInset = self.collectionView.contentInset
     contentInset.top = self.constraint.constant + self.accessoryView.bounds.height
@@ -101,14 +104,15 @@ extension ViewController: InputAccessoryControllerDelegate {
     let offset: CGPoint? = adjustContentOffset ? contentOffset : nil
 
     if let animation = animation {
-      UIView.animate(withDuration: animation.duration,
-        delay: animation.delay,
-        options: animation.options,
-        animations: {
-          self.update(contentInset, contentOffset: offset)
-          self.view.layoutIfNeeded()
-        },
-        completion: nil)
+      let fraction = (260 - value) / 260;
+        UIView.animate(withDuration: 0.25 * TimeInterval(fraction),
+          delay: animation.delay,
+          options: [.curveEaseInOut],
+          animations: {
+            self.view.layoutIfNeeded()
+            self.update(contentInset, contentOffset: offset)
+          },
+          completion: nil)
     } else {
       self.update(contentInset, contentOffset: offset)
     }
