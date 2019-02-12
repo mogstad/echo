@@ -1,6 +1,54 @@
 import UIKit
 import Echo
 
+extension UIView {
+
+  func showLayoutGuides() {
+    // You sub may contain layout guides
+    // so recursively add guides
+    for sub in subviews {
+      sub.showLayoutGuides()
+    }
+
+    guard let layoutGuides = self.layer.sublayers else {
+      return
+    }
+
+    // Clear previous layers
+    for layer in layoutGuides {
+      if layer is LayoutGuideLayer {
+        layer.removeFromSuperlayer()
+      }
+    }
+
+    // Add new layers for guides
+    for guide in self.layoutGuides {
+      let layoutGuideLayer = LayoutGuideLayer(guide: guide)
+      self.layer.addSublayer(layoutGuideLayer)
+    }
+  }
+
+}
+
+class LayoutGuideLayer: CAShapeLayer {
+
+  init(guide:UILayoutGuide) {
+    super.init()
+
+    self.path = UIBezierPath(rect: guide.layoutFrame).cgPath
+    self.lineWidth = 0.5
+    self.lineDashPattern = [1, 1, 1, 1]
+    self.fillColor = UIColor.clear.cgColor
+    self.strokeColor = UIColor.red.cgColor
+  }
+
+  required init?(coder aDecoder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+
+}
+
+
 class LOL: UICollectionViewCell {
   let label: UILabel
 
@@ -42,12 +90,14 @@ class ViewController: UIViewController {
     let hideKeyboard = UITapGestureRecognizer(target: self, action: #selector(ViewController.hideKeyboard(_:)))
     self.collectionView.addGestureRecognizer(hideKeyboard)
     self.automaticallyAdjustsScrollViewInsets = false
-    
+
     let controller = InputAccessoryController(
       scrollView: self.collectionView,
       behaviours: [],
       accessoryView: self.accessoryView,
       textView: self.textView)
+
+    self.accessoryView.bottomAnchor.constraint(equalTo: controller.keyboardLayoutGuide.topAnchor).isActive = true
 
     controller.delegate = self
 
@@ -55,9 +105,16 @@ class ViewController: UIViewController {
   }
 
   @objc func hideKeyboard(_ sender: UIGestureRecognizer) {
-    // let _ = self.textView.resignFirstResponder()
-    // self.textField.resignFirstResponder()
     self.view.endEditing(true)
+  }
+
+  override func viewDidLayoutSubviews() {
+    super.viewDidLayoutSubviews()
+    self.view.showLayoutGuides()
+  }
+
+  override func didReceiveMemoryWarning() {
+    self.view.showLayoutGuides()
   }
 
 }
@@ -92,30 +149,30 @@ extension ViewController: InputAccessoryControllerDelegate {
 
   func updateAccessoryView(_ rect: CGRect, adjustContentOffset: Bool, animation: KeyboardAnimation?) {
 
-    let value = self.constraint.constant;
-    self.constraint.constant = self.keyboardHeight(rect)
-    var contentInset = self.collectionView.contentInset
-    contentInset.top = self.constraint.constant + self.accessoryView.bounds.height
-    contentInset.bottom = 80
-
-    var contentOffset = self.collectionView.contentOffset
-    contentOffset.y += self.collectionView.contentInset.top - contentInset.top
-
-    let offset: CGPoint? = adjustContentOffset ? contentOffset : nil
-
-    if let animation = animation {
-      let fraction = (260 - value) / 260;
-        UIView.animate(withDuration: 0.25 * TimeInterval(fraction),
-          delay: animation.delay,
-          options: [.curveEaseInOut],
-          animations: {
-            self.view.layoutIfNeeded()
-            self.update(contentInset, contentOffset: offset)
-          },
-          completion: nil)
-    } else {
-      self.update(contentInset, contentOffset: offset)
-    }
+//    let value = self.constraint.constant;
+//    self.constraint.constant = self.keyboardHeight(rect)
+//    var contentInset = self.collectionView.contentInset
+//    contentInset.top = self.constraint.constant + self.accessoryView.bounds.height
+//    contentInset.bottom = 80
+//
+//    var contentOffset = self.collectionView.contentOffset
+//    contentOffset.y += self.collectionView.contentInset.top - contentInset.top
+//
+//    let offset: CGPoint? = adjustContentOffset ? contentOffset : nil
+//
+//    if let animation = animation {
+//      let fraction = (260 - value) / 260;
+//        UIView.animate(withDuration: 0.25 * TimeInterval(fraction),
+//          delay: animation.delay,
+//          options: [.curveEaseInOut],
+//          animations: {
+//            self.view.layoutIfNeeded()
+//            self.update(contentInset, contentOffset: offset)
+//          },
+//          completion: nil)
+//    } else {
+//      self.update(contentInset, contentOffset: offset)
+//    }
   }
 
   fileprivate func update(_ contentInset: UIEdgeInsets, contentOffset: CGPoint?) {

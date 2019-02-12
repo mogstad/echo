@@ -13,7 +13,6 @@
             <connections>
                 <outlet property="accessoryView" destination="9p5-Ch-YHC" id="XHO-pX-3hb"/>
                 <outlet property="collectionView" destination="f6p-JG-NJo" id="4G5-v2-iTD"/>
-                <outlet property="constraint" destination="TnC-6J-6aa" id="EML-Vf-gYj"/>
                 <outlet property="textField" destination="yBw-mu-IES" id="91D-39-enR"/>
                 <outlet property="textView" destination="Qim-Yy-HCV" id="KGb-OI-M3f"/>
                 <outlet property="view" destination="iN0-l3-epB" id="hiF-1K-YVV"/>
@@ -74,7 +73,7 @@
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
                 <constraint firstAttribute="bottom" secondItem="f6p-JG-NJo" secondAttribute="bottom" id="9LN-5x-1aq"/>
-                <constraint firstAttribute="bottom" secondItem="9p5-Ch-YHC" secondAttribute="bottom" id="TnC-6J-6aa"/>
+                <constraint firstAttribute="bottom" secondItem="9p5-Ch-YHC" secondAttribute="bottom" placeholder="YES" id="TnC-6J-6aa"/>
                 <constraint firstItem="yBw-mu-IES" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="8" id="UcP-u4-04G"/>
                 <constraint firstItem="yBw-mu-IES" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="63" id="Y8L-f7-FQF"/>
                 <constraint firstAttribute="trailing" secondItem="f6p-JG-NJo" secondAttribute="trailing" id="dep-tm-wwe"/>
