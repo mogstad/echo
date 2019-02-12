@@ -23,7 +23,6 @@ public struct KeyboardAnimation {
 
 
       let bop = UIView.AnimationCurve(rawValue: 7)
-      print("Curve \(bop)")
       self.curve = bop ?? .linear
         self.options = UIView.AnimationOptions(rawValue: curve.uintValue == 0 ? 7 : curve.uintValue << 16)
 

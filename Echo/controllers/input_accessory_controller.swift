@@ -35,18 +35,6 @@ open class InputAccessoryController: NSObject {
   var keyboardHeight: CGFloat? = nil;
   var panGestureRecognizer: UIPanGestureRecognizer!
   let behaviours: InputAccessoryControllerBehaviours
-
-  fileprivate var movingKeyboard: Bool = false {
-    didSet {
-      if self.movingKeyboard == false {
-        self.scrollViewOffsetBeforeDragging = nil
-      } else {
-        self.scrollViewOffsetBeforeDragging = self.scrollView.contentOffset
-      }
-    }
-  }
-  
-  fileprivate var scrollViewOffsetBeforeDragging: CGPoint?
   open weak var delegate: InputAccessoryControllerDelegate?
 
   public init(scrollView: UIScrollView, behaviours: InputAccessoryControllerBehaviours, accessoryView: UIView, textView: UIResponder) {
@@ -61,31 +49,13 @@ open class InputAccessoryController: NSObject {
     self.panGestureRecognizer.delegate = self
     self.scrollView.addGestureRecognizer(self.panGestureRecognizer)
     self.bindKeyboardNotifications()
-    self.addContentOffsetObserver()
-    self.observeAccessoryBoundsChanges()
   }
 
   deinit {
-    self.scrollView.removeObserver(self, forKeyPath: "contentOffset")
-    self.accessoryView.layer.removeObserver(self, forKeyPath: "bounds")
     NotificationCenter.default.removeObserver(self)
   }
 
   // MARK: Private
-
-  fileprivate func createInputAccessoryView() {
-    self.accessoryView.layoutIfNeeded()
-    let input = InputAccessoryView(frame: self.accessoryView.bounds)
-    if let textView = self.textView as? UITextView {
-      textView.inputAccessoryView = input
-    } else if let textField = self.textView as? UITextField {
-      textField.inputAccessoryView = input
-    }
-  }
-
-  fileprivate func updateMovingKeyboard() {
-    self.movingKeyboard = self.scrollView.isDragging
-  }
 
   @objc func handlePanGestureRecognizer(recognizer: UIPanGestureRecognizer) {
     guard
@@ -117,48 +87,38 @@ open class InputAccessoryController: NSObject {
 
   /// Notifications are a mess, dealing with userInfo is pita
   @objc func normalizeKeyboardNotification(_ notification: Notification) {
-    if let keyboardNotification = KeyboardChange(notification: notification), self.validateKeyboardNotification(keyboardNotification) {
-        guard let window = self.scrollView.window else { return }
-        if keyboardNotification.type == .willShow {
-          // Stop scrolling, prevents a layout glitch that only happens if the
-          // scroll view is scrolling and the keyboard appears. Should probably
-          // look into the root of the issue instead of working around it, but
-          // this is good for now.
-          self.scrollView.stopScrolling()
-        }
-
-        if keyboardNotification.type == .willHide || keyboardNotification.type == .willShow || keyboardNotification.type == .didHide {
-          let height = window.frame.height
-          let origin: CGPoint
-          if keyboardNotification.type == .willShow {
-            var keyboardHeight = window.frame.height - keyboardNotification.end.origin.y
-            keyboardHeight = min(keyboardHeight, keyboardNotification.end.height)
-            origin = CGPoint(
-              x: keyboardNotification.end.minX,
-              y: height - keyboardHeight - self.accessoryView.bounds.height)
-          } else {
-            origin = CGPoint(x: 0, y: window.frame.height)
-          }
-
-          print("#willHide #didHide #willShow: \(keyboardNotification.animation)")
-          self.delegate?.updateAccessoryView(CGRect(origin: origin, size: self.accessoryView.bounds.size),
-            adjustContentOffset: true,
-            animation: keyboardNotification.animation)
-
-        }
-
-      if keyboardNotification.type == .willChangeFrame || keyboardNotification.type == .didChangeFrame {
-        print("#didChangeFrame: \(keyboardNotification.animation)")
-        self.keyboardHeight = keyboardNotification.end.height
+  if let keyboardNotification = KeyboardChange(notification: notification), self.validateKeyboardNotification(keyboardNotification) {
+      guard let window = self.scrollView.window else { return }
+      if keyboardNotification.type == .willShow {
+        // Stop scrolling, prevents a layout glitch that only happens if the
+        // scroll view is scrolling and the keyboard appears. Should probably
+        // look into the root of the issue instead of working around it, but
+        // this is good for now.
+        self.scrollView.stopScrolling()
       }
 
-        // Important that this is called after the `updateAccessoryView` 
-        // delegate callback, as the notification’s frame includes the accessory
-        // view
-        if keyboardNotification.type == .didHide || keyboardNotification.type == .didShow  {
-          // self.refreshInputViews()
+      if keyboardNotification.type == .willHide || keyboardNotification.type == .willShow || keyboardNotification.type == .didHide {
+        let height = window.frame.height
+        let origin: CGPoint
+        if keyboardNotification.type == .willShow {
+          var keyboardHeight = window.frame.height - keyboardNotification.end.origin.y
+          keyboardHeight = min(keyboardHeight, keyboardNotification.end.height)
+          origin = CGPoint(
+            x: keyboardNotification.end.minX,
+            y: height - keyboardHeight - self.accessoryView.bounds.height)
+        } else {
+          origin = CGPoint(x: 0, y: window.frame.height)
         }
-        self.movingKeyboard = false
+
+        self.delegate?.updateAccessoryView(CGRect(origin: origin, size: self.accessoryView.bounds.size),
+          adjustContentOffset: true,
+          animation: keyboardNotification.animation)
+
+      }
+
+      if keyboardNotification.type == .willChangeFrame || keyboardNotification.type == .didChangeFrame {
+        self.keyboardHeight = keyboardNotification.end.height
+      }
     }
   }
 
@@ -170,80 +130,6 @@ open class InputAccessoryController: NSObject {
         keyboardChange.belongsTo(self.textView) &&
         self.textView.didNotResignFirstResponder == false
       )
-    }
-  }
-
-  /// Sets or resets the input accessory view depending on if the text view is
-  /// first responder or not. We only want the inputAccessoryView if the text 
-  /// view is first responder.
-  fileprivate func refreshInputViews() {
-    print("refresh input views")
-    if self.behaviours.contains(.disableInteractiveDismissing) == false {
-      if self.textView.isFirstResponder {
-        self.createInputAccessoryView()
-        self.textView.refreshInputViews()
-      } else {
-        self.estimateAccessoryView()
-      }
-    }
-  }
-
-  fileprivate func estimateAccessoryView() {
-    if let window = self.accessoryView.window {
-      let height = window.bounds.height
-      let size = self.accessoryView.bounds.size
-      let frame = CGRect(origin: CGPoint(x: 0, y: height - size.height), size: self.accessoryView.bounds.size)
-      print("#estimateAccessoryView")
-      self.delegate?.updateAccessoryView(frame,
-        adjustContentOffset: self.scrollView.isDragging == false,
-        animation: nil)
-    }
-  }
-
-  /// Add KVO observer to our collection view, we need to keep track of the last
-  /// scrolled position and if the scrolling happend because the user is 
-  /// dragging.
-  fileprivate func addContentOffsetObserver() {
-    self.scrollView.addObserver(self, forKeyPath: "contentOffset", options: [], context: nil)
-  }
-
-  /// Add KVO observer to the accessory view to update the textView’s 
-  /// placeholder accessory view to make sure the size is the same, to make sure
-  /// the keyboard notifications has the correct frame.
-  fileprivate func observeAccessoryBoundsChanges() {
-    self.accessoryView.layer.addObserver(self, forKeyPath: "bounds", options: [.new, .old], context: nil)
-  }
-
-  open override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
-    guard let keyPath = keyPath else { return }
-    let object = object as! NSObject
-    switch keyPath {
-    case "contentOffset" where object == self.scrollView:
-      if self.scrollView.isDragging == false {
-        self.movingKeyboard = false
-      }
-    case "bounds" where object == self.accessoryView.layer:
-      if self.behaviours.contains(.disableInteractiveDismissing) == false {
-        self.refreshInputViews()
-      } else if self.textView.isFirstResponder {
-        let input = InputAccessoryView(frame: self.accessoryView.bounds)
-        self.setInputAccessoryView(input)
-        self.textView.refreshInputViews()
-        self.setInputAccessoryView(nil)
-        self.textView.refreshInputViews()
-      } else {
-        self.estimateAccessoryView()
-      }
-    default:
-      super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
-    }
-  }
-
-  fileprivate func setInputAccessoryView(_ input: UIView?) {
-    if let textView = self.textView as? UITextView {
-      textView.inputAccessoryView = input
-    } else if let textField = self.textView as? UITextField {
-      textField.inputAccessoryView = input
     }
   }
 
