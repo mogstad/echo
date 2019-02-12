@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2D3F8A4B2212F776009725ED /* keyboard_layout_guide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3F8A4A2212F776009725ED /* keyboard_layout_guide.swift */; };
 		2DA61C5F1B5FCA85006FCA22 /* ui_responder_echo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DA61C5E1B5FCA85006FCA22 /* ui_responder_echo.swift */; };
 		2DB496B21B5D37630012D92A /* ui_scroll_view_echo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DB496B11B5D37630012D92A /* ui_scroll_view_echo.swift */; };
 		2DB496B81B5D46480012D92A /* ComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DB496B71B5D46480012D92A /* ComposerView.swift */; };
@@ -52,6 +53,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2D3F8A4A2212F776009725ED /* keyboard_layout_guide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = keyboard_layout_guide.swift; sourceTree = "<group>"; };
 		2DA61C5E1B5FCA85006FCA22 /* ui_responder_echo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ui_responder_echo.swift; path = extensions/ui_responder_echo.swift; sourceTree = "<group>"; };
 		2DB496B11B5D37630012D92A /* ui_scroll_view_echo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ui_scroll_view_echo.swift; path = extensions/ui_scroll_view_echo.swift; sourceTree = "<group>"; };
 		2DB496B71B5D46480012D92A /* ComposerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComposerView.swift; sourceTree = "<group>"; };
@@ -189,6 +191,7 @@
 			isa = PBXGroup;
 			children = (
 				2DBC9C441B55917800F15967 /* input_accessory_controller.swift */,
+				2D3F8A4A2212F776009725ED /* keyboard_layout_guide.swift */,
 			);
 			path = controllers;
 			sourceTree = "<group>";
@@ -314,6 +317,7 @@
 				2DB496B21B5D37630012D92A /* ui_scroll_view_echo.swift in Sources */,
 				2DBC9C3F1B55909F00F15967 /* input_accessory_view.swift in Sources */,
 				2DB496C31B5E8BD50012D92A /* input_accessory_controller_behaviours.swift in Sources */,
+				2D3F8A4B2212F776009725ED /* keyboard_layout_guide.swift in Sources */,
 				2DA61C5F1B5FCA85006FCA22 /* ui_responder_echo.swift in Sources */,
 				2DB496BB1B5E60050012D92A /* keyboard_change.swift in Sources */,
 				2DB496C51B5E8FCF0012D92A /* keyboard_change_type.swift in Sources */,

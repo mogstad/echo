@@ -79,8 +79,8 @@ open class TextView: UITextView {
   // to make sure the keyboard animates to the correct location. Without this 
   // fix the keyboard animates the height of the input accessory view too far.
   open override func resignFirstResponder() -> Bool {
-    self.inputAccessoryView = nil
-    self.refreshInputViews()
+    // self.inputAccessoryView = nil
+    // self.refreshInputViews()
     return super.resignFirstResponder()
   }
 
@@ -96,7 +96,7 @@ open class TextView: UITextView {
   }
 
   fileprivate func configurePlaceholderTextViewVisibility() {
-    self.placeholderTextView.isHidden = self.text.characters.count == 0 ? false : true
+    self.placeholderTextView.isHidden = self.text.count == 0 ? false : true
   }
 
   fileprivate func setup() {
