@@ -27,8 +27,7 @@ class ViewController: UIViewController {
   @IBOutlet var textField: UITextField!
   @IBOutlet var collectionView: UICollectionView!
   @IBOutlet var accessoryView: UIView!
-  @IBOutlet var constraint: NSLayoutConstraint!
-  
+
   var controller: InputAccessoryController?
   var secondController: InputAccessoryController?
   override func viewDidLoad() {
@@ -41,22 +40,29 @@ class ViewController: UIViewController {
 
     let hideKeyboard = UITapGestureRecognizer(target: self, action: #selector(ViewController.hideKeyboard(_:)))
     self.collectionView.addGestureRecognizer(hideKeyboard)
-    self.automaticallyAdjustsScrollViewInsets = false
-    
+    self.collectionView.contentInsetAdjustmentBehavior = .never
+
     let controller = InputAccessoryController(
       scrollView: self.collectionView,
-      behaviours: [.disableInteractiveDismissing],
+      behaviours: [],
       accessoryView: self.accessoryView,
       textView: self.textView)
+
+    self.accessoryView.bottomAnchor.constraint(equalTo: controller.keyboardLayoutGuide.topAnchor).isActive = true
 
     controller.delegate = self
 
     self.controller = controller
   }
 
-  func hideKeyboard(_ sender: UIGestureRecognizer) {
-    let _ = self.textView.resignFirstResponder()
-    self.textField.resignFirstResponder()
+  @objc func hideKeyboard(_ sender: UIGestureRecognizer) {
+    self.view.endEditing(true)
+  }
+
+  override func viewSafeAreaInsetsDidChange() {
+    super.viewSafeAreaInsetsDidChange()
+    self.accessoryView.insetsLayoutMarginsFromSafeArea = false
+    self.accessoryView.layoutMargins = self.view.safeAreaInsets
   }
 
 }
@@ -79,39 +85,35 @@ extension ViewController: UICollectionViewDataSource {
     return cell
   }
 
+  override func didReceiveMemoryWarning() {
+    let viewController = UIViewController()
+    viewController.view.backgroundColor = UIColor.red
+    self.show(viewController, sender: self)
+  }
+
+
 }
 
-extension ViewController: InputAccessoryControllerResponderDelegate {
-  func showAccessoryViewForResponder(_ responder: UIResponder) -> Bool {
-    return true
-  }
-}
+//extension ViewController: InputAccessoryControllerResponderDelegate {
+//  func showAccessoryViewForResponder(_ responder: UIResponder) -> Bool {
+//    return true
+//  }
+//}
 
 extension ViewController: InputAccessoryControllerDelegate {
 
   func updateAccessoryView(_ rect: CGRect, adjustContentOffset: Bool, animation: KeyboardAnimation?) {
-    self.constraint.constant = self.keyboardHeight(rect)
+
+    let constant = self.keyboardHeight(rect)
     var contentInset = self.collectionView.contentInset
-    contentInset.top = self.constraint.constant + self.accessoryView.bounds.height
+    contentInset.top = constant + self.accessoryView.bounds.height
     contentInset.bottom = 80
 
     var contentOffset = self.collectionView.contentOffset
     contentOffset.y += self.collectionView.contentInset.top - contentInset.top
 
     let offset: CGPoint? = adjustContentOffset ? contentOffset : nil
-
-    if let animation = animation {
-      UIView.animate(withDuration: animation.duration,
-        delay: animation.delay,
-        options: animation.options,
-        animations: {
-          self.update(contentInset, contentOffset: offset)
-          self.view.layoutIfNeeded()
-        },
-        completion: nil)
-    } else {
-      self.update(contentInset, contentOffset: offset)
-    }
+    self.update(contentInset, contentOffset: offset)
   }
 
   fileprivate func update(_ contentInset: UIEdgeInsets, contentOffset: CGPoint?) {
@@ -124,7 +126,7 @@ extension ViewController: InputAccessoryControllerDelegate {
 
   func keyboardHeight(_ rect: CGRect) -> CGFloat {
     let endFrame = self.view.convert(rect, from: nil)
-    return max(0, self.view.bounds.height - endFrame.maxY)
+    return max(0, self.view.bounds.height - endFrame.maxY - self.view.safeAreaInsets.bottom)
   }
 
 }
@@ -138,7 +140,7 @@ extension ViewController: UITextViewDelegate {
     // This works around the content being scrolled beyond the bottom.
 
     let endRange = NSRange(
-      location: textView.text.characters.count,
+      location: textView.text.count,
       length: 0)
     
     if NSEqualRanges(textView.selectedRange, endRange) == true {

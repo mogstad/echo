@@ -9,10 +9,9 @@ struct KeyboardChange {
 
   init?(notification: Notification) {
     if let userInfo = notification.userInfo,
-      let end = userInfo[UIKeyboardFrameEndUserInfoKey] as? NSValue,
-      let begin = userInfo[UIKeyboardFrameBeginUserInfoKey] as? NSValue,
+      let end = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue,
+      let begin = userInfo[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue,
       let type = KeyboardChangeType.fromNotificationName(notification.name) {
-
         self.type = type
         self.end = end.cgRectValue
         self.begin = begin.cgRectValue
@@ -22,9 +21,9 @@ struct KeyboardChange {
     }
   }
 
-  func belongsTo(_ responder: UIResponder) -> Bool {
+  func belongsTo(responder: UIResponder) -> Bool {
     switch self.type {
-    case .willHide, .willShow, .didShow:
+    case .willHide, .willShow, .didShow, .willChangeFrame, .didChangeFrame:
       return responder.isFirstResponder
     case .didHide:
       // Not exactly exact science, but a decent guess
