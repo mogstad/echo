@@ -211,13 +211,13 @@ open class InputAccessoryController: NSObject {
   }
 
   fileprivate func validateKeyboardNotification(_ keyboardChange: KeyboardChange) -> Bool {
-    if let _ = self.delegate as? InputAccessoryControllerResponderDelegate {
-      return (self.textView.didNotResignFirstResponder == false)
+    if let delegate = self.delegate as? InputAccessoryControllerResponderDelegate {
+      if let firstResponser = UIResponder.currentFirstResponder() {
+        return delegate.showAccessoryViewForResponder(firstResponser)
+      }
+      return false
     } else {
-      return (
-        keyboardChange.belongsTo(self.textView) &&
-        self.textView.didNotResignFirstResponder == false
-      )
+      return keyboardChange.belongsTo(responder: self.textView)
     }
   }
 
@@ -225,8 +225,8 @@ open class InputAccessoryController: NSObject {
     let notifications = [
       UIResponder.keyboardWillShowNotification,
       UIResponder.keyboardWillChangeFrameNotification,
-      UIResponder.keyboardDidHideNotification,
       UIResponder.keyboardWillHideNotification,
+      UIResponder.keyboardDidHideNotification,
       UIResponder.keyboardDidShowNotification,
     ]
 

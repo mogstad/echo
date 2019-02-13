@@ -87,11 +87,11 @@ extension ViewController: UICollectionViewDataSource {
 
 }
 
-extension ViewController: InputAccessoryControllerResponderDelegate {
-  func showAccessoryViewForResponder(_ responder: UIResponder) -> Bool {
-    return true
-  }
-}
+//extension ViewController: InputAccessoryControllerResponderDelegate {
+//  func showAccessoryViewForResponder(_ responder: UIResponder) -> Bool {
+//    return true
+//  }
+//}
 
 extension ViewController: InputAccessoryControllerDelegate {
 
@@ -106,20 +106,7 @@ extension ViewController: InputAccessoryControllerDelegate {
     contentOffset.y += self.collectionView.contentInset.top - contentInset.top
 
     let offset: CGPoint? = adjustContentOffset ? contentOffset : nil
-
-//    if let animation = animation {
-//      let fraction = (260 - value) / 260;
-//        UIView.animate(withDuration: 0.25 * TimeInterval(fraction),
-//          delay: animation.delay,
-//          options: [.curveEaseInOut],
-//          animations: {
-//            self.view.layoutIfNeeded()
-//            self.update(contentInset, contentOffset: offset)
-//          },
-//          completion: nil)
-//    } else {
-      self.update(contentInset, contentOffset: offset)
-//    }
+    self.update(contentInset, contentOffset: offset)
   }
 
   fileprivate func update(_ contentInset: UIEdgeInsets, contentOffset: CGPoint?) {
@@ -132,7 +119,7 @@ extension ViewController: InputAccessoryControllerDelegate {
 
   func keyboardHeight(_ rect: CGRect) -> CGFloat {
     let endFrame = self.view.convert(rect, from: nil)
-    return max(0, self.view.bounds.height - endFrame.maxY)
+    return max(0, self.view.bounds.height - endFrame.maxY - self.view.safeAreaInsets.bottom)
   }
 
 }

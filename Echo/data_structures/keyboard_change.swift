@@ -21,16 +21,13 @@ struct KeyboardChange {
     }
   }
 
-  func belongsTo(_ responder: UIResponder) -> Bool {
+  func belongsTo(responder: UIResponder) -> Bool {
     switch self.type {
-    case .willHide, .willShow, .didShow:
+    case .willHide, .willShow, .didShow, .willChangeFrame, .didChangeFrame:
       return responder.isFirstResponder
     case .didHide:
       // Not exactly exact science, but a decent guess
       return responder.isFirstResponder == false
-    case .willChangeFrame, .didChangeFrame:
-      print("belongsTo will change frame did change frame")
-      return true
     }
   }
 
