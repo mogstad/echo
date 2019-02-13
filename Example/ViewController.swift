@@ -1,54 +1,6 @@
 import UIKit
 import Echo
 
-extension UIView {
-
-  func showLayoutGuides() {
-    // You sub may contain layout guides
-    // so recursively add guides
-    for sub in subviews {
-      sub.showLayoutGuides()
-    }
-
-    guard let layoutGuides = self.layer.sublayers else {
-      return
-    }
-
-    // Clear previous layers
-    for layer in layoutGuides {
-      if layer is LayoutGuideLayer {
-        layer.removeFromSuperlayer()
-      }
-    }
-
-    // Add new layers for guides
-    for guide in self.layoutGuides {
-      let layoutGuideLayer = LayoutGuideLayer(guide: guide)
-      self.layer.addSublayer(layoutGuideLayer)
-    }
-  }
-
-}
-
-class LayoutGuideLayer: CAShapeLayer {
-
-  init(guide:UILayoutGuide) {
-    super.init()
-
-    self.path = UIBezierPath(rect: guide.layoutFrame).cgPath
-    self.lineWidth = 0.5
-    self.lineDashPattern = [1, 1, 1, 1]
-    self.fillColor = UIColor.clear.cgColor
-    self.strokeColor = UIColor.red.cgColor
-  }
-
-  required init?(coder aDecoder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
-  }
-
-}
-
-
 class LOL: UICollectionViewCell {
   let label: UILabel
 
@@ -106,15 +58,6 @@ class ViewController: UIViewController {
 
   @objc func hideKeyboard(_ sender: UIGestureRecognizer) {
     self.view.endEditing(true)
-  }
-
-  override func viewDidLayoutSubviews() {
-    super.viewDidLayoutSubviews()
-    self.view.showLayoutGuides()
-  }
-
-  override func didReceiveMemoryWarning() {
-    self.view.showLayoutGuides()
   }
 
 }
@@ -199,7 +142,7 @@ extension ViewController: UITextViewDelegate {
     // This works around the content being scrolled beyond the bottom.
 
     let endRange = NSRange(
-      location: textView.text.characters.count,
+      location: textView.text.count,
       length: 0)
     
     if NSEqualRanges(textView.selectedRange, endRange) == true {

@@ -70,15 +70,19 @@ open class InputAccessoryController: NSObject {
 
     func keyboardHeight(view: UIView, rect: CGRect) -> CGFloat {
       let endFrame = view.convert(rect, from: nil)
-      return max(0, view.bounds.height - endFrame.maxY)
+      return max(0, view.bounds.height - endFrame.maxY - self.scrollView.safeAreaInsets.bottom)
     }
+
+    self.accessoryView.layoutMargins = UIEdgeInsets(
+      top: 0,
+      left: 0,
+      bottom: self.scrollView.safeAreaInsets.bottom,
+      right: 0
+    )
 
     self.delegate?.updateAccessoryView(rect,
                                        adjustContentOffset: adjustContentOffset,
                                        animation: animation)
-
-
-
 
     if let view = self.keyboardLayoutGuide.owningView {
       print("Works \(keyboardHeight(view: view, rect: rect))")
@@ -201,7 +205,6 @@ open class InputAccessoryController: NSObject {
 
 extension InputAccessoryController: UIGestureRecognizerDelegate {
   open func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-    print("self.keyboardVisible: \(self.keyboardVisible)")
     return self.scrollView.keyboardDismissMode == .interactive && self.keyboardVisible
   }
 
