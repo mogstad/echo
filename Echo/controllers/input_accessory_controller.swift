@@ -49,9 +49,7 @@ open class InputAccessoryController: NSObject {
   let scrollView: UIScrollView
   let accessoryView: UIView
   let textView: UIResponder
-  var keyboardVisible = false
   var status: Status = .hidden
-
 
   var panGestureRecognizer: UIPanGestureRecognizer!
   let behaviours: InputAccessoryControllerBehaviours
@@ -115,7 +113,6 @@ open class InputAccessoryController: NSObject {
         let view = recognizer.view,
         let window = view.window
         else {
-          print("View isn’t in the window")
           return
       }
 
@@ -137,9 +134,7 @@ open class InputAccessoryController: NSObject {
       self.invoke(inputAccessoryView,
                   adjustContentOffset: false,
                   animation: nil)
-    case .began:
-      break
-    case .ended:
+    case .began, .ended:
       break
     default:
       break
@@ -161,9 +156,7 @@ open class InputAccessoryController: NSObject {
 
     if keyboardNotification.type == .willHide {
       self.status = .hidden
-      self.keyboardVisible = false
     } else if keyboardNotification.type == .didShow {
-      self.keyboardVisible = true
       self.status = .visible(keyboardHeight: keyboardNotification.end.height)
     }
 

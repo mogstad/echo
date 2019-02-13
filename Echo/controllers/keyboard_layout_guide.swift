@@ -14,13 +14,11 @@ open class KeyboardLayoutGuide: UILayoutGuide {
     NotificationCenter.default.removeObserver(self)
   }
 
-
   internal func setup() {
     guard let owningView = self.owningView else {
       return
     }
 
-    let viewBottomAnchor = owningView.safeAreaLayoutGuide.bottomAnchor
     NSLayoutConstraint.activate([
       self.heightConstraint,
       self.leftAnchor.constraint(equalTo: owningView.leftAnchor),

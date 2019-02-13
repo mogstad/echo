@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2D3F8A4B2212F776009725ED /* keyboard_layout_guide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3F8A4A2212F776009725ED /* keyboard_layout_guide.swift */; };
+		2D3F8A4C22146535009725ED /* text_view.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DBC9C4F1B55B8B800F15967 /* text_view.swift */; };
 		2DA61C5F1B5FCA85006FCA22 /* ui_responder_echo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DA61C5E1B5FCA85006FCA22 /* ui_responder_echo.swift */; };
 		2DB496B21B5D37630012D92A /* ui_scroll_view_echo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DB496B11B5D37630012D92A /* ui_scroll_view_echo.swift */; };
 		2DB496B81B5D46480012D92A /* ComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DB496B71B5D46480012D92A /* ComposerView.swift */; };
@@ -24,7 +25,6 @@
 		2DBC9C451B55917800F15967 /* input_accessory_controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DBC9C441B55917800F15967 /* input_accessory_controller.swift */; };
 		2DBC9C4A1B55978400F15967 /* Echo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DBC9BF91B558FBD00F15967 /* Echo.framework */; };
 		2DBC9C4B1B55978400F15967 /* Echo.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2DBC9BF91B558FBD00F15967 /* Echo.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		2DBC9C501B55B8B800F15967 /* text_view.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DBC9C4F1B55B8B800F15967 /* text_view.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -71,7 +71,7 @@
 		2DBC9C241B55900500F15967 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		2DBC9C271B55900500F15967 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		2DBC9C441B55917800F15967 /* input_accessory_controller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = input_accessory_controller.swift; sourceTree = "<group>"; };
-		2DBC9C4F1B55B8B800F15967 /* text_view.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = text_view.swift; path = views/text_view.swift; sourceTree = "<group>"; };
+		2DBC9C4F1B55B8B800F15967 /* text_view.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = text_view.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -140,7 +140,6 @@
 				2DB496B91B5E5FE60012D92A /* data_structures */,
 				2DB496B01B5D37470012D92A /* extensions */,
 				2DBC9BFC1B558FBD00F15967 /* Supporting Files */,
-				2DBC9C401B5590BC00F15967 /* views */,
 			);
 			path = Echo;
 			sourceTree = "<group>";
@@ -157,6 +156,7 @@
 		2DBC9C1A1B55900500F15967 /* Example */ = {
 			isa = PBXGroup;
 			children = (
+				2DBC9C4F1B55B8B800F15967 /* text_view.swift */,
 				2DBC9C1D1B55900500F15967 /* AppDelegate.swift */,
 				2DBC9C1F1B55900500F15967 /* ViewController.swift */,
 				2DBC9C241B55900500F15967 /* Images.xcassets */,
@@ -174,14 +174,6 @@
 				2DBC9C1C1B55900500F15967 /* Info.plist */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		2DBC9C401B5590BC00F15967 /* views */ = {
-			isa = PBXGroup;
-			children = (
-				2DBC9C4F1B55B8B800F15967 /* text_view.swift */,
-			);
-			name = views;
 			sourceTree = "<group>";
 		};
 		2DBC9C461B5591B100F15967 /* controllers */ = {
@@ -319,7 +311,6 @@
 				2DB496C51B5E8FCF0012D92A /* keyboard_change_type.swift in Sources */,
 				2DBC9C451B55917800F15967 /* input_accessory_controller.swift in Sources */,
 				2DB496BD1B5E60C20012D92A /* animation.swift in Sources */,
-				2DBC9C501B55B8B800F15967 /* text_view.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -328,6 +319,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2DBC9C201B55900500F15967 /* ViewController.swift in Sources */,
+				2D3F8A4C22146535009725ED /* text_view.swift in Sources */,
 				2DBC9C1E1B55900500F15967 /* AppDelegate.swift in Sources */,
 				2DB496B81B5D46480012D92A /* ComposerView.swift in Sources */,
 			);
@@ -467,7 +459,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_SWIFT3_OBJC_INFERENCE = On;
 				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
@@ -488,7 +479,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.getflow.$(PRODUCT_NAME:rfc1034identifier:lower)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_SWIFT3_OBJC_INFERENCE = On;
 				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
@@ -509,7 +499,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = no.searis.bbop;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "Searis Development";
-				SWIFT_SWIFT3_OBJC_INFERENCE = On;
 				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
@@ -526,7 +515,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = no.searis.bbop;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_SWIFT3_OBJC_INFERENCE = On;
 				SWIFT_VERSION = 4.2;
 			};
 			name = Release;

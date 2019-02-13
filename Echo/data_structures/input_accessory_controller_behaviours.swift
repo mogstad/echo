@@ -12,12 +12,6 @@ import Foundation
 /// dismissing the keyboard. Usually only needed for inverted scrollViews, where
 /// the scroll view gets resized to make room for the keyboard.
 ///
-/// ### disableInteractiveDismissing
-///
-/// Enable when interactive dismissing is disabled, it allows us to do some 
-/// optimizations, and allows the input accessory view to be visible when 
-/// another responder is first responder.
-///
 public struct InputAccessoryControllerBehaviours: OptionSet {
 
   public let rawValue: UInt
@@ -28,5 +22,4 @@ public struct InputAccessoryControllerBehaviours: OptionSet {
 
   public static let allZeros = InputAccessoryControllerBehaviours(rawValue: 0)
   public static let adjustContentOffset = InputAccessoryControllerBehaviours(rawValue: 0b1)
-  public static let disableInteractiveDismissing = InputAccessoryControllerBehaviours(rawValue: 0b10)
 }
