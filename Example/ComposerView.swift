@@ -2,11 +2,11 @@ import UIKit
 
 class Yolo: UIView {
   @IBOutlet var composerView: ComposerView!
-//  override var intrinsicContentSize: CGSize {
-//    return CGSize(
-//      width: UIView.noIntrinsicMetric,
-//      height: self.composerView.intrinsicContentSize.height + self.layoutMargins.bottom)
-//  }
+  override var intrinsicContentSize: CGSize {
+    return CGSize(
+      width: UIView.noIntrinsicMetric,
+      height: self.composerView.intrinsicContentSize.height + self.layoutMargins.bottom)
+  }
 
   override func awakeFromNib() {
     super.awakeFromNib()

@@ -82,7 +82,7 @@ open class InputAccessoryController: NSObject {
 //      bottom: self.keyboardVisible ?  self.scrollView.safeAreaInsets.bottom : 0,
 //      right: 0
 //    )
-//    self.accessoryView.invalidateIntrinsicContentSize()
+    self.accessoryView.invalidateIntrinsicContentSize()
 
 
     self.delegate?.updateAccessoryView(rect,
@@ -123,7 +123,6 @@ open class InputAccessoryController: NSObject {
         origin: origin,
         size: self.accessoryView.bounds.size)
 
-      print("#handlePanGestureRecognizer")
       self.invoke(inputAccessoryView,
                   adjustContentOffset: false,
                   animation: nil)
