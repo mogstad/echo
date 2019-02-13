@@ -20,6 +20,23 @@ public protocol InputAccessoryControllerResponderDelegate: InputAccessoryControl
 
 }
 
+enum Status {
+  case scrubbing(position: CGFloat, keyboardHeight: CGFloat)
+  case visible(keyboardHeight: CGFloat)
+  case hidden
+
+  var keyboardHeight: CGFloat? {
+    switch self {
+    case let .scrubbing(_, keyboardHeight):
+        return keyboardHeight
+    case let .visible(keyboardHeight):
+        return keyboardHeight
+    default:
+        return nil
+    }
+  }
+}
+
 /// InputAccessoryController coordinates the interaction between a scroll view
 /// and an input accessory view. Setting a view as the responder’s 
 /// `inputAccessoryView` has many problems, and results in hacks fragmented 
@@ -32,8 +49,10 @@ open class InputAccessoryController: NSObject {
   let scrollView: UIScrollView
   let accessoryView: UIView
   let textView: UIResponder
-  var keyboardHeight: CGFloat? = nil
   var keyboardVisible = false
+  var status: Status = .hidden
+
+
   var panGestureRecognizer: UIPanGestureRecognizer!
   let behaviours: InputAccessoryControllerBehaviours
   open weak var delegate: InputAccessoryControllerDelegate?
@@ -62,9 +81,6 @@ open class InputAccessoryController: NSObject {
   public func setupKeyboardLayoutGuide() {
     self.accessoryView.superview?.addLayoutGuide(
       self.keyboardLayoutGuide)
-
-    print("bop: \(self.scrollView.safeAreaInsets.bottom)")
-
   }
 
   // MARK: Private
@@ -75,15 +91,6 @@ open class InputAccessoryController: NSObject {
       let endFrame = view.convert(rect, from: nil)
       return max(0, view.bounds.height - endFrame.maxY - self.scrollView.safeAreaInsets.bottom)
     }
-
-//    self.accessoryView.layoutMargins = UIEdgeInsets(
-//      top: 0,
-//      left: 0,
-//      bottom: self.keyboardVisible ?  self.scrollView.safeAreaInsets.bottom : 0,
-//      right: 0
-//    )
-    self.accessoryView.invalidateIntrinsicContentSize()
-
 
     self.delegate?.updateAccessoryView(rect,
                                        adjustContentOffset: adjustContentOffset,
@@ -104,9 +111,9 @@ open class InputAccessoryController: NSObject {
     switch recognizer.state {
     case .changed:
       guard
+        let keyboardHeight = self.status.keyboardHeight,
         let view = recognizer.view,
-        let window = view.window,
-        let keyboardHeight = self.keyboardHeight
+        let window = view.window
         else {
           print("View isn’t in the window")
           return
@@ -123,11 +130,16 @@ open class InputAccessoryController: NSObject {
         origin: origin,
         size: self.accessoryView.bounds.size)
 
+      self.status = .scrubbing(
+        position: absoluteLocation.y,
+        keyboardHeight: keyboardHeight)
+
       self.invoke(inputAccessoryView,
                   adjustContentOffset: false,
                   animation: nil)
-    case .began, .ended:
-//      self.scrollView.stopScrolling()
+    case .began:
+      break
+    case .ended:
       break
     default:
       break
@@ -148,9 +160,11 @@ open class InputAccessoryController: NSObject {
       }
 
     if keyboardNotification.type == .willHide {
+      self.status = .hidden
       self.keyboardVisible = false
     } else if keyboardNotification.type == .didShow {
       self.keyboardVisible = true
+      self.status = .visible(keyboardHeight: keyboardNotification.end.height)
     }
 
       if keyboardNotification.type == .willChangeFrame {
@@ -163,15 +177,35 @@ open class InputAccessoryController: NSObject {
           y: height - keyboardHeight - self.accessoryView.bounds.height
         )
 
-        let accessoryViewFrame = CGRect(origin: origin, size: self.accessoryView.bounds.size)
-        self.invoke(accessoryViewFrame,
-                    adjustContentOffset: true,
-                    animation: keyboardNotification.animation
-        )
-      }
+        let accessoryViewFrame = CGRect(
+          origin: origin,
+          size: self.accessoryView.bounds.size)
 
-      if keyboardNotification.type == .willChangeFrame || keyboardNotification.type == .didChangeFrame {
-        self.keyboardHeight = keyboardNotification.end.height
+        if var animation = keyboardNotification.animation {
+          if case let .scrubbing(value, _) = self.status {
+
+            let delta = value - keyboardNotification.end.minY
+            let fraction = delta / keyboardNotification.end.height
+
+            animation = KeyboardAnimation(
+              duration: animation.duration * TimeInterval(fraction),
+              options: [.curveEaseInOut],
+              delay: 0)
+          }
+
+          UIView.animate(withDuration: animation.duration,
+            delay: animation.delay,
+            options: animation.options,
+            animations: {
+              self.invoke(accessoryViewFrame,
+                          adjustContentOffset: true,
+                          animation: animation)
+            },
+            completion: nil)
+        } else {
+          self.invoke(accessoryViewFrame, adjustContentOffset: true, animation: nil)
+
+        }
       }
     }
   }
@@ -207,12 +241,19 @@ open class InputAccessoryController: NSObject {
 }
 
 extension InputAccessoryController: UIGestureRecognizerDelegate {
-  open func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-    return self.scrollView.keyboardDismissMode == .interactive && self.keyboardVisible
+
+  public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+    if case .visible(_) = self.status {
+      return self.scrollView.keyboardDismissMode == .interactive
+    }
+    return false
   }
 
-  /// Only recognice simultaneous gestures when its the `panGesture`
-  open func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+  public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+    return true
+  }
+
+  public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
     return gestureRecognizer === self.panGestureRecognizer
   }
 

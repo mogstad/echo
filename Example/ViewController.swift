@@ -97,17 +97,16 @@ extension ViewController: InputAccessoryControllerDelegate {
 
   func updateAccessoryView(_ rect: CGRect, adjustContentOffset: Bool, animation: KeyboardAnimation?) {
 
-//    let value = self.constraint.constant;
-//    self.constraint.constant = self.keyboardHeight(rect)
-//    var contentInset = self.collectionView.contentInset
-//    contentInset.top = self.constraint.constant + self.accessoryView.bounds.height
-//    contentInset.bottom = 80
-//
-//    var contentOffset = self.collectionView.contentOffset
-//    contentOffset.y += self.collectionView.contentInset.top - contentInset.top
-//
-//    let offset: CGPoint? = adjustContentOffset ? contentOffset : nil
-//
+    let constant = self.keyboardHeight(rect)
+    var contentInset = self.collectionView.contentInset
+    contentInset.top = constant + self.accessoryView.bounds.height
+    contentInset.bottom = 80
+
+    var contentOffset = self.collectionView.contentOffset
+    contentOffset.y += self.collectionView.contentInset.top - contentInset.top
+
+    let offset: CGPoint? = adjustContentOffset ? contentOffset : nil
+
 //    if let animation = animation {
 //      let fraction = (260 - value) / 260;
 //        UIView.animate(withDuration: 0.25 * TimeInterval(fraction),
@@ -119,7 +118,7 @@ extension ViewController: InputAccessoryControllerDelegate {
 //          },
 //          completion: nil)
 //    } else {
-//      self.update(contentInset, contentOffset: offset)
+      self.update(contentInset, contentOffset: offset)
 //    }
   }
 
