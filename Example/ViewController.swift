@@ -27,8 +27,7 @@ class ViewController: UIViewController {
   @IBOutlet var textField: UITextField!
   @IBOutlet var collectionView: UICollectionView!
   @IBOutlet var accessoryView: UIView!
-  @IBOutlet var constraint: NSLayoutConstraint!
-  
+
   var controller: InputAccessoryController?
   var secondController: InputAccessoryController?
   override func viewDidLoad() {
@@ -41,7 +40,7 @@ class ViewController: UIViewController {
 
     let hideKeyboard = UITapGestureRecognizer(target: self, action: #selector(ViewController.hideKeyboard(_:)))
     self.collectionView.addGestureRecognizer(hideKeyboard)
-    self.automaticallyAdjustsScrollViewInsets = false
+    self.collectionView.contentInsetAdjustmentBehavior = .never
 
     let controller = InputAccessoryController(
       scrollView: self.collectionView,
@@ -58,6 +57,12 @@ class ViewController: UIViewController {
 
   @objc func hideKeyboard(_ sender: UIGestureRecognizer) {
     self.view.endEditing(true)
+  }
+
+  override func viewSafeAreaInsetsDidChange() {
+    super.viewSafeAreaInsetsDidChange()
+    self.accessoryView.insetsLayoutMarginsFromSafeArea = false
+    self.accessoryView.layoutMargins = self.view.safeAreaInsets
   }
 
 }

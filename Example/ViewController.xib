@@ -11,10 +11,10 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ViewController" customModule="Example" customModuleProvider="target">
             <connections>
-                <outlet property="accessoryView" destination="9p5-Ch-YHC" id="XHO-pX-3hb"/>
+                <outlet property="accessoryView" destination="9p5-Ch-YHC" id="Ckv-eq-UFd"/>
                 <outlet property="collectionView" destination="f6p-JG-NJo" id="4G5-v2-iTD"/>
                 <outlet property="textField" destination="yBw-mu-IES" id="91D-39-enR"/>
-                <outlet property="textView" destination="Qim-Yy-HCV" id="KGb-OI-M3f"/>
+                <outlet property="textView" destination="Qim-Yy-HCV" id="RMx-XD-96e"/>
                 <outlet property="view" destination="iN0-l3-epB" id="hiF-1K-YVV"/>
             </connections>
         </placeholder>
@@ -36,29 +36,44 @@
                         <outlet property="delegate" destination="-1" id="OaW-Uy-b2F"/>
                     </connections>
                 </collectionView>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9p5-Ch-YHC" customClass="ComposerView" customModule="Example" customModuleProvider="target">
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9p5-Ch-YHC" customClass="Yolo" customModule="Example" customModuleProvider="target">
                     <rect key="frame" x="0.0" y="623" width="375" height="44"/>
                     <subviews>
-                        <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="Bop" translatesAutoresizingMaskIntoConstraints="NO" id="Qim-Yy-HCV" customClass="TextView" customModule="Echo">
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uny-8D-H4U" customClass="ComposerView" customModule="Example" customModuleProvider="target">
                             <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
-                            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                            <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            <subviews>
+                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="Bop" translatesAutoresizingMaskIntoConstraints="NO" id="Qim-Yy-HCV" customClass="TextView" customModule="Echo">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                    <connections>
+                                        <outlet property="delegate" destination="-1" id="JpE-c6-5sO"/>
+                                    </connections>
+                                </textView>
+                            </subviews>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <constraints>
+                                <constraint firstAttribute="bottom" secondItem="Qim-Yy-HCV" secondAttribute="bottom" id="KI4-Yl-jVW"/>
+                                <constraint firstItem="Qim-Yy-HCV" firstAttribute="leading" secondItem="uny-8D-H4U" secondAttribute="leading" id="PDI-dU-CPQ"/>
+                                <constraint firstItem="Qim-Yy-HCV" firstAttribute="top" secondItem="uny-8D-H4U" secondAttribute="top" id="heX-8i-Xlw"/>
+                                <constraint firstAttribute="trailing" secondItem="Qim-Yy-HCV" secondAttribute="trailing" id="wBB-Wd-Y2l"/>
+                            </constraints>
                             <connections>
-                                <outlet property="delegate" destination="-1" id="JpE-c6-5sO"/>
+                                <outlet property="textView" destination="Qim-Yy-HCV" id="Anp-Q4-NMn"/>
                             </connections>
-                        </textView>
+                        </view>
                     </subviews>
                     <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <constraints>
-                        <constraint firstAttribute="trailing" secondItem="Qim-Yy-HCV" secondAttribute="trailing" id="4yZ-sj-gtb"/>
-                        <constraint firstItem="Qim-Yy-HCV" firstAttribute="leading" secondItem="9p5-Ch-YHC" secondAttribute="leading" id="YWQ-WP-w8p"/>
-                        <constraint firstAttribute="bottom" secondItem="Qim-Yy-HCV" secondAttribute="bottom" id="bxn-Wt-hHc"/>
-                        <constraint firstItem="Qim-Yy-HCV" firstAttribute="top" secondItem="9p5-Ch-YHC" secondAttribute="top" id="gyc-mW-bp1"/>
+                        <constraint firstItem="uny-8D-H4U" firstAttribute="top" secondItem="9p5-Ch-YHC" secondAttribute="top" id="4F0-zS-a8R"/>
+                        <constraint firstAttribute="bottom" secondItem="uny-8D-H4U" secondAttribute="bottom" placeholder="YES" id="4sJ-Qw-SKz"/>
+                        <constraint firstAttribute="trailing" secondItem="uny-8D-H4U" secondAttribute="trailing" id="iB9-Mp-nZT"/>
+                        <constraint firstItem="uny-8D-H4U" firstAttribute="leading" secondItem="9p5-Ch-YHC" secondAttribute="leading" id="rk6-zr-XVc"/>
                         <constraint firstAttribute="height" constant="44" placeholder="YES" id="yJ4-Dy-Jxt"/>
                     </constraints>
                     <connections>
-                        <outlet property="textView" destination="Qim-Yy-HCV" id="ydQ-av-gzy"/>
+                        <outlet property="composerView" destination="uny-8D-H4U" id="VIF-WQ-l0o"/>
                     </connections>
                 </view>
                 <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="yBw-mu-IES">
@@ -83,7 +98,7 @@
                 <constraint firstAttribute="trailing" secondItem="yBw-mu-IES" secondAttribute="trailing" constant="8" id="mhY-aO-dXG"/>
                 <constraint firstItem="f6p-JG-NJo" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="swW-Kp-nOU"/>
             </constraints>
-            <point key="canvasLocation" x="428" y="391"/>
+            <point key="canvasLocation" x="428" y="390.85457271364322"/>
         </view>
     </objects>
 </document>

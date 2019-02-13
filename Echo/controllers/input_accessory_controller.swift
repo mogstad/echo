@@ -60,7 +60,10 @@ open class InputAccessoryController: NSObject {
   }
 
   public func setupKeyboardLayoutGuide() {
-    self.accessoryView.superview?.addLayoutGuide(self.keyboardLayoutGuide)
+    self.accessoryView.superview?.addLayoutGuide(
+      self.keyboardLayoutGuide)
+
+    print("bop: \(self.scrollView.safeAreaInsets.bottom)")
 
   }
 
@@ -73,19 +76,20 @@ open class InputAccessoryController: NSObject {
       return max(0, view.bounds.height - endFrame.maxY - self.scrollView.safeAreaInsets.bottom)
     }
 
-    self.accessoryView.layoutMargins = UIEdgeInsets(
-      top: 0,
-      left: 0,
-      bottom: self.scrollView.safeAreaInsets.bottom,
-      right: 0
-    )
+//    self.accessoryView.layoutMargins = UIEdgeInsets(
+//      top: 0,
+//      left: 0,
+//      bottom: self.keyboardVisible ?  self.scrollView.safeAreaInsets.bottom : 0,
+//      right: 0
+//    )
+//    self.accessoryView.invalidateIntrinsicContentSize()
+
 
     self.delegate?.updateAccessoryView(rect,
                                        adjustContentOffset: adjustContentOffset,
                                        animation: animation)
 
     if let view = self.keyboardLayoutGuide.owningView {
-      print("Works \(keyboardHeight(view: view, rect: rect))")
       self.keyboardLayoutGuide.heightConstraint.constant = keyboardHeight(view: view, rect: rect)
       if let _ = animation {
         view.layoutIfNeeded()

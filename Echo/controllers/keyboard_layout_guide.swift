@@ -25,7 +25,7 @@ open class KeyboardLayoutGuide: UILayoutGuide {
       self.heightConstraint,
       self.leftAnchor.constraint(equalTo: owningView.leftAnchor),
       self.rightAnchor.constraint(equalTo: owningView.rightAnchor),
-      self.bottomAnchor.constraint(equalTo: viewBottomAnchor),
+      self.bottomAnchor.constraint(equalTo: owningView.bottomAnchor),
     ])
   }
 
