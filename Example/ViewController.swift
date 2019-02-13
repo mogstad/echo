@@ -89,7 +89,6 @@ extension ViewController: UICollectionViewDataSource {
     let viewController = UIViewController()
     viewController.view.backgroundColor = UIColor.red
     self.show(viewController, sender: self)
-    // self.reloadInputViews()
   }
 
 
