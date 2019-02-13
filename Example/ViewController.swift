@@ -85,6 +85,14 @@ extension ViewController: UICollectionViewDataSource {
     return cell
   }
 
+  override func didReceiveMemoryWarning() {
+    let viewController = UIViewController()
+    viewController.view.backgroundColor = UIColor.red
+    self.show(viewController, sender: self)
+    // self.reloadInputViews()
+  }
+
+
 }
 
 //extension ViewController: InputAccessoryControllerResponderDelegate {
