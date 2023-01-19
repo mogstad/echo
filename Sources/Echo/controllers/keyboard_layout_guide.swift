@@ -1,3 +1,5 @@
+import UIKit
+
 open class KeyboardLayoutGuide: UILayoutGuide {
 
   lazy var heightConstraint: NSLayoutConstraint = {

@@ -20,6 +20,6 @@ public struct InputAccessoryControllerBehaviours: OptionSet {
     self.rawValue = rawValue
   }
 
-  public static let allZeros = InputAccessoryControllerBehaviours(rawValue: 0)
+    public static let allZeros = InputAccessoryControllerBehaviours([])
   public static let adjustContentOffset = InputAccessoryControllerBehaviours(rawValue: 0b1)
 }

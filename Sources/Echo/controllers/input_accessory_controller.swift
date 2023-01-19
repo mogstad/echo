@@ -1,6 +1,6 @@
 import UIKit
 
-public protocol InputAccessoryControllerDelegate: class {
+public protocol InputAccessoryControllerDelegate: AnyObject {
 
   /// Called whenever the keyboard frame changes
   ///
